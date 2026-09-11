@@ -60,7 +60,6 @@ import com.radioshuddhodhan.app.RadioApp
 import com.radioshuddhodhan.app.ui.components.AnimatedEqualizer
 import com.radioshuddhodhan.app.ui.navigation.Routes
 import com.radioshuddhodhan.app.ui.navigation.AppNavHost
-import com.radioshuddhodhan.app.ui.splash.SplashScreen
 import com.radioshuddhodhan.app.ui.theme.RadioShuddhodhanTheme
 
 /**

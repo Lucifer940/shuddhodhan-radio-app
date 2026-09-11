@@ -37,6 +37,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -60,6 +61,8 @@ import com.radioshuddhodhan.app.ui.appViewModel
 @Composable
 fun AdminNewsScreen(postMode: Boolean = false) {
     val L = LocalAppStrings.current
+    val backDispatcher = androidx.compose.ui.platform.LocalOnBackPressedDispatcherOwner.current
+        ?.onBackPressedDispatcher
     val viewModel: AdminDataViewModel = appViewModel { AdminDataViewModel(it) }
     val newsList by viewModel.news.collectAsStateWithLifecycle()
     val postList by viewModel.posts.collectAsStateWithLifecycle()
@@ -67,6 +70,15 @@ fun AdminNewsScreen(postMode: Boolean = false) {
 
     var editorTarget by remember { mutableStateOf<Any?>(null) } // NewsEntity | PostEntity | "new"
     var deleteTarget by remember { mutableStateOf<String?>(null) }
+
+    LaunchedEffect(toast) {
+        if (toast != null) {
+            kotlinx.coroutines.delay(2500)
+            viewModel.consumeToast()
+        }
+    }
+
+    val onBack = { backDispatcher?.onBackPressed() }
 
     Scaffold(
         topBar = {
@@ -78,7 +90,7 @@ fun AdminNewsScreen(postMode: Boolean = false) {
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = {}) {
+                    IconButton(onClick = { onBack() }) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = L.back)
                     }
                 }

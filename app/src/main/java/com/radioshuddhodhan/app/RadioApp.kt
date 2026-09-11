@@ -66,7 +66,9 @@ class RadioApp : Application(), PushCapableApp {
         }
 
         // Keep auto-reconnect setting in sync with the player.
-        appScope.launch {
+        // Main dispatcher: the MediaController inside PlayerManager is built
+        // on the main thread.
+        appScope.launch(Dispatchers.Main) {
             settings.autoReconnect.collect { playerManager.autoReconnectEnabled = it }
         }
     }

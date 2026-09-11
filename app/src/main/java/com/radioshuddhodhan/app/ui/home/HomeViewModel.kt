@@ -39,15 +39,16 @@ class HomeViewModel(private val app: RadioApp) : ViewModel() {
         app.contentRepository.observeUpcomingEvents(BsCalendar.todayInNepal().toString(), 5),
         app.contentRepository.observeAnnouncements(System.currentTimeMillis()),
         app.configRepository.config
-    ) { news, posts, stations, events, announcements, config ->
+    ) { values ->
+        @Suppress("UNCHECKED_CAST")
         HomeUiState(
             isLoading = false,
-            config = config,
-            news = news.take(6),
-            posts = posts.take(4),
-            stations = stations.take(6),
-            events = events,
-            announcements = announcements
+            config = values[5] as com.radioshuddhodhan.app.data.remote.AppConfigDto,
+            news = (values[0] as List<com.radioshuddhodhan.app.data.db.NewsEntity>).take(6),
+            posts = (values[1] as List<com.radioshuddhodhan.app.data.db.PostEntity>).take(4),
+            stations = (values[2] as List<com.radioshuddhodhan.app.data.db.StationEntity>).take(6),
+            events = values[3] as List<com.radioshuddhodhan.app.data.db.EventEntity>,
+            announcements = values[4] as List<com.radioshuddhodhan.app.data.db.AnnouncementEntity>
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), HomeUiState())
 

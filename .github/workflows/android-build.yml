@@ -7,6 +7,9 @@ on:
     branches: ["main"]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     name: Build Radio Shuddhodhan APK
@@ -28,16 +31,50 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      - name: Unit tests
-        run: ./gradlew testDebugUnitTest --stacktrace
+      - name: Unit tests, debug and release APKs
+        run: |
+          set -o pipefail
+          ./gradlew testDebugUnitTest assembleDebug assembleRelease --continue --stacktrace 2>&1 | tee build.log
 
-      - name: Build debug APK
-        run: ./gradlew assembleDebug --stacktrace
+      - name: Report errors as commit comment
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const log = fs.readFileSync('build.log', 'utf8');
+            const lines = log.split('\n');
+            const interesting = [];
+            for (let i = 0; i < lines.length; i++) {
+              const l = lines[i];
+              if (/^e: |error: |Execution failed|Caused by|FAILURE:|\* What went wrong|> Task .* FAILED/.test(l)) {
+                for (let j = i; j < Math.min(i + 6, lines.length); j++) {
+                  interesting.push(lines[j]);
+                }
+                interesting.push('---');
+              }
+            }
+            let body = '### ❌ Build failed — error digest\n```\n' +
+              (interesting.join('\n') || 'No matched lines; see full log artifact.') +
+              '\n```\n(total log lines: ' + lines.length + ')';
+            if (body.length > 60000) body = body.slice(0, 60000);
+            await github.rest.repos.createCommitComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              commit_sha: context.sha,
+              body
+            });
 
-      - name: Build release APK
-        run: ./gradlew assembleRelease --stacktrace
+      - name: Upload full build log (on failure)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-log
+          path: build.log
+          retention-days: 7
 
       - name: Upload debug APK artifact
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: RadioShuddhodhan-v1.0.1-debug
@@ -45,6 +82,7 @@ jobs:
           retention-days: 30
 
       - name: Upload release APK artifact
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: RadioShuddhodhan-v1.0.1-release

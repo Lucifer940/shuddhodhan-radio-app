@@ -1,3 +1,5 @@
+@file:OptIn(UnstableApi::class)
+
 package com.radioshuddhodhan.app.audio
 
 import android.content.Intent
@@ -15,7 +17,6 @@ import androidx.media3.session.MediaSessionService
  * Bluetooth & headphone support (audio becoming noisy pauses playback) and
  * automatic network retries.
  */
-@UnstableApi
 class RadioPlaybackService : MediaSessionService() {
 
     private var mediaSession: MediaSession? = null

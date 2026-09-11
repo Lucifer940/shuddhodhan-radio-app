@@ -1,3 +1,5 @@
+@file:OptIn(UnstableApi::class)
+
 package com.radioshuddhodhan.app.audio
 
 import android.content.ComponentName
@@ -42,7 +44,6 @@ data class PlayerState(
  *   be restored when the UI process reconnects to an already-running session
  *   (e.g. app reopened while streaming in the background).
  */
-@UnstableApi
 class PlayerManager(
     private val context: Context,
     private val scope: CoroutineScope,

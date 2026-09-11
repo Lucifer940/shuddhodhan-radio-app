@@ -234,6 +234,7 @@ class AppStrings(val nepali: Boolean) {
     val emailOrPhone get() = t("इमेल वा फोन", "Email or phone")
     val message get() = t("सन्देश", "Message")
     val sendMessage get() = t("सन्देश पठाउनुहोस्", "Send message")
+    val send get() = t("पठाउनुहोस्", "Send")
     val sending get() = t("पठाइँदै…", "Sending…")
     val messageSent get() = t("सन्देश पठाइयो! धन्यवाद।", "Message sent! Thank you.")
     val messageSendFailed get() = t("सन्देश पठाउन असफल — फेरि प्रयास गर्नुहोस्", "Could not send — please retry")
