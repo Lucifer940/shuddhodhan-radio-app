@@ -1,0 +1,29 @@
+# Built application files
+*.apk
+*.aab
+*.ap_
+*.dex
+
+# Java/Kotlin class files
+*.class
+
+# Gradle generated files
+.gradle/
+build/
+app/build/
+.cxx/
+
+# Local configuration files (sdk paths, signing secrets)
+local.properties
+keystore.properties
+*.jks
+*.keystore
+
+# IDE files
+.idea/
+*.iml
+captures/
+.DS_Store
+
+# Release output (kept out of git; CI artifacts are used instead)
+releases/
