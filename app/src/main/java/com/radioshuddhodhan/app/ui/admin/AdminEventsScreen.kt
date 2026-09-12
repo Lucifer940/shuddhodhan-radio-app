@@ -192,9 +192,12 @@ private fun EventEditorDialog(
         },
         // The date must be a valid, in-range AD date (the calendar filters
         // events by ISO string comparison — a malformed date would silently
-        // never show up anywhere).
-        val dateValid = runCatching { BsCalendar.fromAd(java.time.LocalDate.parse(date)) }.isSuccess
+        // never show up anywhere). Computed inside the confirmButton lambda
+        // so it revalidates as the text changes.
         confirmButton = {
+            val dateValid = runCatching {
+                BsCalendar.fromAd(java.time.LocalDate.parse(date))
+            }.isSuccess
             TextButton(
                 onClick = {
                     if (title.isNotBlank() && dateValid) {
