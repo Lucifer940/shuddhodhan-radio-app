@@ -183,7 +183,10 @@ object BsCalendar {
 
     /** Gregorian -> Bikram Sambat conversion. */
     fun fromAd(ad: LocalDate): BsDate {
-        var epochDay = ad.toEpochDay()
+        // Days elapsed since the anchor BS 2000-01-01 == AD 1943-04-14.
+        // (Must be relative to the anchor — NOT the raw epoch day — to match toAd().)
+        var epochDay = ad.toEpochDay() - ANCHOR_BS.toEpochDay()
+        require(epochDay >= 0) { "Date $ad is before the supported BS range ($FIRST_BS_YEAR)" }
         var year = FIRST_BS_YEAR
         var yearLen = daysInYear(year)
         while (epochDay >= yearLen) {
