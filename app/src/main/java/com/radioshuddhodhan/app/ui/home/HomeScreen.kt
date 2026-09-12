@@ -26,6 +26,10 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bolt
+import androidx.compose.material.icons.filled.Call
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Campaign
 import androidx.compose.material.icons.filled.Event
 import androidx.compose.material.icons.filled.HelpCenter
@@ -326,9 +330,126 @@ fun HomeScreen(
             }
         }
 
+        // ---------- Station details (bottom of the main menu) ----------
+        item {
+            StationDetailsCard(
+                config = state.config,
+                nepali = L.nepali
+            )
+        }
+
         if (state.isLoading) {
             item { SkeletonList() }
         }
+    }
+}
+
+/**
+ * Station details card: frequency, address, tagline and the station team
+ * (Station Manager, Technician, Marketing Manager). All values come from the
+ * admin-controlled config, so the owner can change them any time and every
+ * user sees the update instantly.
+ */
+@Composable
+private fun StationDetailsCard(
+    config: com.radioshuddhodhan.app.data.remote.AppConfigDto,
+    nepali: Boolean
+) {
+    val L = LocalAppStrings.current
+    Card(
+        shape = MaterialTheme.shapes.large,
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 8.dp)
+    ) {
+        Column(Modifier.padding(18.dp)) {
+            Text(
+                text = (if (nepali) "रेडियो शुद्धोधन " else "Radio Shuddhodhan ") + config.stationFrequency,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold
+            )
+            Spacer(Modifier.height(4.dp))
+            Text(
+                text = if (nepali) config.taglineNe else config.taglineEn,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Spacer(Modifier.height(10.dp))
+
+            DetailRow(Icons.Filled.LocationOn, config.stationAddress)
+            if (config.contactPhone.isNotBlank()) {
+                DetailRow(Icons.Filled.Call, config.contactPhone)
+            }
+            if (config.contactEmail.isNotBlank()) {
+                DetailRow(Icons.Filled.Email, config.contactEmail)
+            }
+
+            val team = config.teamMembers.sortedBy { it.sortOrder }
+            if (team.any { it.name.isNotBlank() }) {
+                Spacer(Modifier.height(12.dp))
+                Text(L.ourTeam, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
+                Spacer(Modifier.height(8.dp))
+                team.filter { it.name.isNotBlank() }.forEach { member ->
+                    val role = when (member.roleKey) {
+                        "manager" -> L.stationManagerRole
+                        "technician" -> L.technicianRole
+                        "marketing" -> L.marketingManagerRole
+                        else -> if (nepali) member.roleNe.ifBlank { member.role } else member.role
+                    }
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 6.dp)
+                    ) {
+                        Icon(
+                            Icons.Filled.Person,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Spacer(Modifier.width(10.dp))
+                        Column {
+                            Text(
+                                text = member.name,
+                                style = MaterialTheme.typography.bodyMedium,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                            Text(
+                                text = if (member.contact.isBlank()) role
+                                else "$role • ${member.contact}",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun DetailRow(icon: androidx.compose.ui.graphics.vector.ImageVector, text: String) {
+    Row(
+        verticalAlignment = Alignment.Top,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp)
+    ) {
+        Icon(
+            icon,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.size(18.dp)
+        )
+        Spacer(Modifier.width(10.dp))
+        Text(
+            text = text,
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
     }
 }
 

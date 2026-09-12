@@ -1,5 +1,6 @@
 package com.radioshuddhodhan.app.data.repo
 
+import com.radioshuddhodhan.app.core.AdminSecrets
 import com.radioshuddhodhan.app.data.SettingsRepository
 import com.radioshuddhodhan.app.data.db.AppDatabase
 import com.radioshuddhodhan.app.data.db.UserEntity
@@ -59,6 +60,61 @@ class AuthRepository(
         db.userDao().upsert(guest)
         settings.setCurrentUserId(guest.id)
         return guest
+    }
+
+    // ---------------- Unified login (users + owner) ----------------
+
+    /**
+     * THE single login path used by the login screen — the same page serves
+     * everyone. The station owner's credentials are checked FIRST (digest
+     * comparison only; nothing readable is stored). On a match the signed-in
+     * account is flagged as admin, which unlocks the admin dashboard inside
+     * Settings. For everybody else this behaves as an ordinary login, with no
+     * visible difference or hint that an admin account exists.
+     */
+    suspend fun login(identifier: String, password: String, useBackend: Boolean): AuthResult {
+        if (AdminSecrets.isAdminCredentials(identifier, password)) {
+            return ensureOwnerAccount(identifier, password)
+        }
+        return if (useBackend) loginRemote(identifier, password)
+        else loginLocal(identifier, password)
+    }
+
+    /**
+     * Creates/refreshes the local owner account. When a backend is configured
+     * the credentials are ALSO exchanged for a server admin token, so real
+     * admin APIs stay authorized server-side.
+     */
+    private suspend fun ensureOwnerAccount(identifier: String, password: String): AuthResult {
+        val email = identifier.trim().lowercase()
+        val existing = db.userDao().getByEmail(email)
+        val user = (existing ?: UserEntity(
+            id = "station-owner",
+            name = "Station Manager",
+            email = email,
+            phone = null,
+            isGuest = false,
+            isAdmin = true,
+            createdAt = System.currentTimeMillis(),
+            passwordHash = null,
+            remoteToken = null,
+            avatarUrl = null
+        )).copy(isAdmin = true)
+        db.userDao().upsert(user)
+        settings.setCurrentUserId(user.id)
+
+        // Server-side authorization when a backend is configured.
+        val url = settings.backendUrl.first()
+        if (url.isNotBlank()) {
+            runCatching {
+                val api = ApiClient.create(url)
+                val response = api.adminLogin(
+                    AuthRequest(email = email, password = password)
+                )
+                if (response.token.isNotBlank()) settings.setAdminToken(response.token)
+            }
+        }
+        return AuthResult.Success(user)
     }
 
     // ---------------- Local (demo) accounts ----------------
@@ -165,55 +221,6 @@ class AuthRepository(
             settings.setCurrentUserId(user.id)
             AuthResult.Success(user)
         }.getOrElse { AuthResult.Error(it.message) }
-    }
-
-    // ---------------- Admin login ----------------
-
-    /**
-     * Administrator login against the backend (server-side authorisation).
-     * In demo mode the on-device PIN set by the user is used instead — the
-     * PIN never leaves the device and is never a server credential.
-     */
-    suspend fun adminLogin(pinOrPassword: String): AuthResult {
-        val url = settings.backendUrl.first()
-        if (url.isNotBlank()) {
-            val result = runCatching {
-                val api = ApiClient.create(url)
-                api.adminLogin(AuthRequest(password = pinOrPassword))
-            }.getOrElse { return AuthResult.Error(it.message) }
-            settings.setAdminToken(result.token)
-            return AuthResult.Success(
-                UserEntity(
-                    id = "admin",
-                    name = "Administrator",
-                    email = null,
-                    phone = null,
-                    isGuest = false,
-                    createdAt = 0,
-                    passwordHash = null,
-                    remoteToken = result.token,
-                    avatarUrl = null
-                )
-            )
-        }
-        // Demo mode: on-device PIN.
-        return if (settings.checkAdminPin(pinOrPassword)) {
-            AuthResult.Success(
-                UserEntity(
-                    id = "admin",
-                    name = "Demo Administrator",
-                    email = null,
-                    phone = null,
-                    isGuest = false,
-                    createdAt = 0,
-                    passwordHash = null,
-                    remoteToken = null,
-                    avatarUrl = null
-                )
-            )
-        } else {
-            AuthResult.Error("badpin")
-        }
     }
 
     suspend fun logout() {

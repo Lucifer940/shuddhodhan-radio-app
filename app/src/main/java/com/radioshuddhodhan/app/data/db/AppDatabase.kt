@@ -20,7 +20,7 @@ import androidx.room.RoomDatabase
         BookmarkedNewsEntity::class,
         NotificationItemEntity::class
     ],
-    version = 1,
+    version = 2, // v2: users.isAdmin
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {

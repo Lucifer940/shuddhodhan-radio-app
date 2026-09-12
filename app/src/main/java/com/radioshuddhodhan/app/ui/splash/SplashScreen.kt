@@ -93,7 +93,7 @@ fun SplashScreen(
             )
             Spacer(Modifier.height(8.dp))
             Text(
-                text = "तपाईंको आवाज, तपाईंको समुदाय",
+                text = AppInfo.TAGLINE_NE,
                 style = MaterialTheme.typography.bodyLarge,
                 color = Color.White.copy(alpha = 0.85f),
                 modifier = Modifier.alpha(textAlpha.value)

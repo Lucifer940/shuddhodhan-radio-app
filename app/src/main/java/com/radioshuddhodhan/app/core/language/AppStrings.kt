@@ -11,8 +11,11 @@ class AppStrings(val nepali: Boolean) {
     private fun t(ne: String, en: String): String = if (nepali) ne else en
 
     // ---------- General ----------
-    val appName get() = "Radio Shuddhodhan"
-    val tagline get() = t("तपाईंको आवाज, तपाईंको समुदाय", "Your voice, your community")
+    val appName get() = "Radio Shuddhodhan 95.1 MHz"
+    val tagline get() = t(
+        "हरेक नेपालीको मन रेडियो शुद्धोधन 95.1 मेगाहर्ज.",
+        "In every Nepali's heart — Radio Shuddhodhan 95.1 MHz."
+    )
     val ok get() = t("ठीक छ", "OK")
     val cancel get() = t("रद्द गर्नुहोस्", "Cancel")
     val save get() = t("सुरक्षित गर्नुहोस्", "Save")
@@ -356,11 +359,6 @@ class AppStrings(val nepali: Boolean) {
     val notifTypeGeneral get() = t("सामान्य", "General")
 
     // ---------- Admin ----------
-    val adminLoginTitle get() = t("एडमिन लगइन", "Administrator login")
-    val adminPin get() = t("एडमिन PIN", "Admin PIN")
-    val enterPin get() = t("PIN लेख्नुहोस्", "Enter PIN")
-    val setNewPin get() = t("नयाँ PIN सेट गर्नुहोस्", "Set a new PIN")
-    val pinMismatch get() = t("PIN मिलेन", "Incorrect PIN")
     val demoAdminNotice get() = t(
         "डेमो एडमिन — परिवर्तनहरू यो उपकरणमा मात्र सुरक्षित हुन्छन्। उत्पादन प्रयोगका लागि ब्याकएन्ड सर्भर जडान गर्नुहोस् (सेटिङ → ब्याकएन्ड सर्भर)।",
         "Demo admin — changes are saved on this device only. Connect the backend server for production (Settings → Backend server)."
@@ -469,4 +467,32 @@ class AppStrings(val nepali: Boolean) {
         "The administrator has enabled maintenance mode. Please check back soon."
     )
     val tryAgainLater get() = t("फेरि प्रयास गर्नुहोस्", "Try again")
+
+    // ---------- Station details / team ----------
+    val stationDetails get() = t("स्टेशन विवरण", "Station details")
+    val ourTeam get() = t("हाम्रो टोली", "Our team")
+    val stationManagerRole get() = t("स्टेशन प्रमुख", "Station Manager")
+    val technicianRole get() = t("प्राविधिक", "Technician")
+    val marketingManagerRole get() = t("मार्केटिङ प्रमुख", "Marketing Manager")
+    val address get() = t("ठेगाना", "Address")
+    val frequency get() = t("फ्रिक्वेन्सी", "Frequency")
+
+    // ---------- Stream status ----------
+    val pleaseWait get() = t("कृपया प्रतीक्षा गर्नुहोस्…", "Please wait…")
+    val checkingStream get() = t("जाँच हुँदै…", "Checking…")
+    val offlineStation get() = t("अफलाइन — स्टेशन अहिले उपलब्ध छैन", "Offline — station not available right now")
+
+    /** "x listening" badge text. */
+    fun listeningCount(n: Int): String = if (nepali) {
+        com.radioshuddhodhan.app.core.nepalidate.BsCalendar.toNepaliDigits(n.toString()) + " जना सुन्दै"
+    } else {
+        "$n listening"
+    }
+
+    // ---------- Hidden owner section (Settings) ----------
+    val adminConsoleDesc get() = t(
+        "स्टेशन मालिकको खाता — सबै व्यवस्थापन उपकरणहरू यहाँ छन्।",
+        "Station owner account — all management tools live here."
+    )
+    val openAdminDashboard get() = t("ड्यासबोर्ड खोल्नुहोस्", "Open dashboard")
 }

@@ -34,6 +34,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -60,6 +61,7 @@ import com.radioshuddhodhan.app.ui.components.EmptyState
 import com.radioshuddhodhan.app.ui.components.SkeletonList
 import com.radioshuddhodhan.app.ui.components.brandGradient
 import com.radioshuddhodhan.app.ui.theme.BrandGold
+import com.radioshuddhodhan.app.ui.theme.LiveRed
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -76,11 +78,52 @@ private class StationsViewModel(private val app: RadioApp) : ViewModel() {
         val favorites: List<String> = emptyList(),
         val query: String = "",
         val favoritesOnly: Boolean = false,
-        val playingStationId: String? = null
+        val playingStationId: String? = null,
+        /** stationId -> stream online? (absent = still being checked) */
+        val streamOnline: Map<String, Boolean> = emptyMap()
     )
 
     private val query = MutableStateFlow("")
     private val favoritesOnly = MutableStateFlow(false)
+
+    /** LIVE / OFFLINE probe results per station. */
+    private val streamOnline = MutableStateFlow<Map<String, Boolean>>(emptyMap())
+
+    private var latestStations: List<StationEntity> = emptyList()
+
+    /** Per-station probe throttle so we never hammer the stream servers. */
+    private val lastProbe = java.util.concurrent.ConcurrentHashMap<String, Long>()
+
+    init {
+        // Probe on entry and whenever the station list changes…
+        viewModelScope.launch {
+            app.contentRepository.observeStations().collect { stations ->
+                latestStations = stations
+                refreshHealth(stations)
+            }
+        }
+        // …and refresh every minute so the LIVE / OFFLINE badges stay honest.
+        viewModelScope.launch {
+            while (true) {
+                kotlinx.coroutines.delay(60_000)
+                refreshHealth(latestStations)
+            }
+        }
+    }
+
+    private fun refreshHealth(stations: List<StationEntity>) {
+        val now = System.currentTimeMillis()
+        stations.filter { it.streamUrl.isNotBlank() }.forEach { station ->
+            val last = lastProbe[station.id] ?: 0L
+            if (now - last < 45_000) return@forEach
+            lastProbe[station.id] = now
+            viewModelScope.launch {
+                val online = com.radioshuddhodhan.app.core.util.StreamHealthChecker
+                    .isOnline(station.streamUrl)
+                streamOnline.value = streamOnline.value + (station.id to online)
+            }
+        }
+    }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val state = combine(
@@ -91,8 +134,17 @@ private class StationsViewModel(private val app: RadioApp) : ViewModel() {
         app.contentRepository.observeFavoriteIds(),
         query,
         favoritesOnly,
-        app.playerManager.state
-    ) { searched, favorites, q, favOnly, player ->
+        app.playerManager.state,
+        streamOnline
+    ) { values ->
+        // 6 flows -> vararg combine: cast each element back to its type.
+        @Suppress("UNCHECKED_CAST")
+        val searched = values[0] as List<StationEntity>
+        val favorites = values[1] as List<String>
+        val q = values[2] as String
+        val favOnly = values[3] as Boolean
+        val player = values[4] as com.radioshuddhodhan.app.audio.PlayerState
+        val health = values[5] as Map<String, Boolean>
         val base = if (favOnly) searched.filter { it.id in favorites } else searched
         StationsUiState(
             isLoading = false,
@@ -100,7 +152,8 @@ private class StationsViewModel(private val app: RadioApp) : ViewModel() {
             favorites = favorites,
             query = q,
             favoritesOnly = favOnly,
-            playingStationId = player.station?.id
+            playingStationId = player.station?.id,
+            streamOnline = health
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), StationsUiState())
 
@@ -176,6 +229,7 @@ fun StationsScreen(onOpenPlayer: () -> Unit) {
                             station = station,
                             isFavorite = station.id in state.favorites,
                             isPlaying = state.playingStationId == station.id,
+                            streamOnline = state.streamOnline[station.id],
                             onPlay = {
                                 viewModel.play(station)
                                 onOpenPlayer()
@@ -189,11 +243,51 @@ fun StationsScreen(onOpenPlayer: () -> Unit) {
     }
 }
 
+/**
+ * LIVE (stream answers) / OFFLINE (stream down) badge. While the probe is
+ * still running — or for stations without a configured URL — a neutral
+ * "Please wait…" / unconfigured label is shown instead.
+ */
+@Composable
+private fun StreamStatusBadge(online: Boolean?, playing: Boolean, hasUrl: Boolean) {
+    val L = LocalAppStrings.current
+    val (label, color) = when {
+        !hasUrl -> L.streamNotConfigured to MaterialTheme.colorScheme.onSurfaceVariant
+        online == null -> L.checkingStream to MaterialTheme.colorScheme.onSurfaceVariant
+        online -> L.live to androidx.compose.ui.graphics.Color(0xFF2E7D32)
+        else -> L.offline to LiveRed
+    }
+    Surface(
+        shape = MaterialTheme.shapes.small,
+        color = color.copy(alpha = 0.14f),
+        contentColor = color
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp)
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(6.dp)
+                    .clip(CircleShape)
+                    .background(if (online == true && hasUrl) color.copy(alpha = 0.9f) else color)
+            )
+            Spacer(Modifier.width(5.dp))
+            Text(
+                text = if (online == true && hasUrl && playing) L.live else label,
+                style = MaterialTheme.typography.labelSmall,
+                fontWeight = FontWeight.Bold
+            )
+        }
+    }
+}
+
 @Composable
 private fun StationCard(
     station: StationEntity,
     isFavorite: Boolean,
     isPlaying: Boolean,
+    streamOnline: Boolean?,
     onPlay: () -> Unit,
     onToggleFavorite: () -> Unit
 ) {
@@ -260,6 +354,12 @@ private fun StationCard(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis
+                )
+                Spacer(Modifier.height(6.dp))
+                StreamStatusBadge(
+                    online = streamOnline,
+                    playing = isPlaying,
+                    hasUrl = station.streamUrl.isNotBlank()
                 )
             }
             if (isPlaying) {

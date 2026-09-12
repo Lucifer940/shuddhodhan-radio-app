@@ -38,6 +38,7 @@ Authentication uses `Authorization: Bearer <token>`.
 | GET | `/api/v1/news/{id}` | `News` | Single article |
 | GET | `/api/v1/posts?limit=` | `Post[]` | Published posts |
 | GET | `/api/v1/stations` | `Station[]` | Radio stations |
+| GET | `/api/v1/stations/{id}/listeners` | `{stationId, count, updatedAt}` | Live listener count (drives the "x listening" badge) |
 | GET | `/api/v1/events?from=&to=` | `Event[]` | Calendar events |
 | GET | `/api/v1/announcements` | `Announcement[]` | Active announcements |
 | GET | `/api/v1/social-links` | `SocialLink[]` | Social links (incl. Facebook Live) |
@@ -118,6 +119,18 @@ app never sees the key. AI output is saved in the app only as an
   "contactWebsite": "", "aboutText": "", "aboutTextNe": "",
   "appLogoUrl": "", "googleLoginEnabled": false,
   "facebookLoginEnabled": false, "phoneLoginEnabled": true,
+  "stationFrequency": "95.1 MHz",
+  "stationAddress": "Shuddhodhan-4, Pharsatikar, Rupandehi, Nepal",
+  "taglineNe": "हरेक नेपालीको मन रेडियो शुद्धोधन 95.1 मेगाहर्ज.",
+  "taglineEn": "In every Nepali's heart — Radio Shuddhodhan 95.1 MHz.",
+  "teamMembers": [
+    {"roleKey": "manager", "role": "Station Manager", "roleNe": "स्टेशन प्रमुख",
+     "name": "Ravi Rana", "contact": "", "sortOrder": 0},
+    {"roleKey": "technician", "role": "Technician", "roleNe": "प्राविधिक",
+     "name": "", "contact": "", "sortOrder": 1},
+    {"roleKey": "marketing", "role": "Marketing Manager", "roleNe": "मार्केटिङ प्रमुख",
+     "name": "", "contact": "", "sortOrder": 2}
+  ],
   "updatedAt": 0
 }
 ```

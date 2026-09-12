@@ -46,11 +46,9 @@ class AuthViewModel(private val app: RadioApp) : ViewModel() {
         }
         viewModelScope.launch {
             _state.value = _state.value.copy(isLoading = true, error = null)
-            val result = if (_state.value.hasBackend) {
-                app.authRepository.loginRemote(identifier, password)
-            } else {
-                app.authRepository.loginLocal(identifier, password)
-            }
+            val result = app.authRepository.login(
+                identifier, password, _state.value.hasBackend
+            )
             _state.value = when (result) {
                 is AuthResult.Success -> _state.value.copy(isLoading = false, success = true)
                 is AuthResult.Error -> _state.value.copy(isLoading = false, error = result.message)

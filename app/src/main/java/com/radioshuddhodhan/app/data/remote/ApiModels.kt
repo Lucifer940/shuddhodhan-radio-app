@@ -24,17 +24,54 @@ data class AppConfigDto(
     val homeBannerTextNe: String = "",
     val currentProgram: String = "",
     val currentProgramNe: String = "",
-    val contactPhone: String = "",
-    val contactEmail: String = "",
-    val contactWhatsapp: String = "",
-    val contactWebsite: String = "",
+    val contactPhone: String = "+977 984-7036945",
+    val contactEmail: String = "Radiosuddhodhan95.1@gmail.com",
+    val contactWhatsapp: String = "+977 984-7036945",
+    val contactWebsite: String = "https://www.facebook.com/share/1BjjUPuPdx/",
     val aboutText: String = "",
     val aboutTextNe: String = "",
     val appLogoUrl: String = "",
     val googleLoginEnabled: Boolean = false,
     val facebookLoginEnabled: Boolean = false,
     val phoneLoginEnabled: Boolean = true,
+    // ---- Station identity & team (shown on Home > Station details) ----
+    val stationFrequency: String = "95.1 MHz",
+    val stationAddress: String = "Shuddhodhan-4, Pharsatikar, Rupandehi, Nepal",
+    val taglineNe: String = "हरेक नेपालीको मन रेडियो शुद्धोधन 95.1 मेगाहर्ज.",
+    val taglineEn: String = "In every Nepali's heart — Radio Shuddhodhan 95.1 MHz.",
+    val teamMembers: List<TeamMemberDto> = listOf(
+        TeamMemberDto(
+            roleKey = "manager", role = "Station Manager", roleNe = "स्टेशन प्रमुख",
+            name = "Ravi Rana", contact = "", sortOrder = 0
+        ),
+        TeamMemberDto(
+            roleKey = "technician", role = "Technician", roleNe = "प्राविधिक",
+            name = "", contact = "", sortOrder = 1
+        ),
+        TeamMemberDto(
+            roleKey = "marketing", role = "Marketing Manager", roleNe = "मार्केटिङ प्रमुख",
+            name = "", contact = "", sortOrder = 2
+        )
+    ),
     val updatedAt: Long = 0
+)
+
+/**
+ * A member of the station team shown in the Station details section
+ * (Station Manager, Technician, Marketing Manager, …). The admin can add,
+ * edit and remove these at any time; users see the changes instantly.
+ */
+@Serializable
+data class TeamMemberDto(
+    /** Machine role key: "manager" | "technician" | "marketing" | custom. */
+    val roleKey: String = "",
+    /** Display name of the role. */
+    val role: String = "",
+    val roleNe: String = "",
+    val name: String = "",
+    val contact: String = "",
+    /** Smaller cards render first (0 = top). */
+    val sortOrder: Int = 0
 )
 
 @Serializable
@@ -199,4 +236,12 @@ data class AiResponse(
 data class SimpleResult(
     val ok: Boolean = false,
     val message: String = ""
+)
+
+/** Live listener count for a station, provided by the backend. */
+@Serializable
+data class ListenerCountDto(
+    val stationId: String = "",
+    val count: Int = 0,
+    val updatedAt: Long = 0
 )

@@ -32,8 +32,8 @@ object SeedData {
             listOf(
                 StationEntity(
                     id = "st-shuddhodhan",
-                    name = "Radio Shuddhodhan",
-                    nameNe = "रेडियो शुद्धोधन",
+                    name = "Radio Shuddhodhan 95.1 MHz",
+                    nameNe = "रेडियो शुद्धोधन 95.1 मेगाहर्ज",
                     description = "तपाईंको समुदायको आवाज — समाचार, संगीत र जानकारी। The voice of your community.",
                     streamUrl = "", // Admin configures the real stream URL
                     logoUrl = null,
@@ -223,10 +223,10 @@ object SeedData {
         // ---------------- Social links (placeholders for the admin) ----------------
         db.socialLinkDao().upsertAll(
             listOf(
-                SocialLinkEntity("soc-fb", "facebook", "Facebook", "https://www.facebook.com/", 0, true, "local"),
-                SocialLinkEntity("soc-fblive", "facebook_live", "Facebook Live", "https://www.facebook.com/live", 1, true, "local"),
+                SocialLinkEntity("soc-fb", "facebook", "Facebook", "https://www.facebook.com/share/1BjjUPuPdx/", 0, true, "local"),
+                SocialLinkEntity("soc-fblive", "facebook_live", "Facebook Live", "https://www.facebook.com/share/1BjjUPuPdx/", 1, true, "local"),
                 SocialLinkEntity("soc-yt", "youtube", "YouTube", "https://www.youtube.com/", 2, true, "local"),
-                SocialLinkEntity("soc-web", "website", "Website", "https://example.com/", 3, true, "local")
+                SocialLinkEntity("soc-web", "website", "Website", "https://www.facebook.com/share/1BjjUPuPdx/", 3, true, "local")
             )
         )
     }

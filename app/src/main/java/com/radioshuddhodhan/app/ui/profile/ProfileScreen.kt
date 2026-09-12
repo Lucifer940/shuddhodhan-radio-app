@@ -18,7 +18,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Logout
-import androidx.compose.material.icons.filled.AdminPanelSettings
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.HelpCenter
@@ -72,7 +71,6 @@ fun ProfileScreen(
     onOpenBookmarks: () -> Unit,
     onOpenFavorites: () -> Unit,
     onOpenNotifications: () -> Unit,
-    onOpenAdminLogin: () -> Unit,
     onOpenHelpdesk: () -> Unit,
     onOpenSocial: () -> Unit
 ) {
@@ -161,32 +159,6 @@ fun ProfileScreen(
         ProfileRow(Icons.Filled.Info, L.about, onOpenAbout)
 
         Spacer(Modifier.height(12.dp))
-
-        // Admin entry
-        Card(
-            shape = MaterialTheme.shapes.medium,
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                contentColor = MaterialTheme.colorScheme.onSecondaryContainer
-            ),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 6.dp)
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(14.dp)
-            ) {
-                Icon(Icons.Filled.AdminPanelSettings, contentDescription = null)
-                Spacer(Modifier.width(10.dp))
-                Column(Modifier.weight(1f)) {
-                    Text(L.adminConsole, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.SemiBold)
-                }
-                TextButton(onClick = onOpenAdminLogin) {
-                    Text(L.login)
-                }
-            }
-        }
 
         // Logout
         if (state.user != null) {

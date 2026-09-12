@@ -19,7 +19,6 @@ import com.radioshuddhodhan.app.ui.admin.AdminAnnouncementsScreen
 import com.radioshuddhodhan.app.ui.admin.AdminConfigScreen
 import com.radioshuddhodhan.app.ui.admin.AdminEventsScreen
 import com.radioshuddhodhan.app.ui.admin.AdminHelpdeskScreen
-import com.radioshuddhodhan.app.ui.admin.AdminLoginScreen
 import com.radioshuddhodhan.app.ui.admin.AdminManagerScreen
 import com.radioshuddhodhan.app.ui.admin.AdminNewsScreen
 import com.radioshuddhodhan.app.ui.admin.AdminNotifyScreen
@@ -179,7 +178,6 @@ fun AppNavHost(
                 onOpenBookmarks = { navController.navigate(Routes.NEWS) },
                 onOpenFavorites = { navController.navigate(Routes.STATIONS) },
                 onOpenNotifications = { navController.navigate(Routes.NOTIFICATIONS) },
-                onOpenAdminLogin = { navController.navigate(Routes.ADMIN_LOGIN) },
                 onOpenHelpdesk = { navController.navigate(Routes.HELPDESK) },
                 onOpenSocial = { navController.navigate(Routes.SOCIAL) }
             )
@@ -192,7 +190,8 @@ fun AppNavHost(
         composable(Routes.SETTINGS) {
             SettingsScreen(
                 onBack = { navController.popBackStack() },
-                onOpenAbout = { navController.navigate(Routes.ABOUT) }
+                onOpenAbout = { navController.navigate(Routes.ABOUT) },
+                onOpenAdmin = { navController.navigate(Routes.ADMIN_HOME) }
             )
         }
 
@@ -211,18 +210,8 @@ fun AppNavHost(
             SocialScreen(onBack = { navController.popBackStack() })
         }
 
-        // ---- Admin ----
-        composable(Routes.ADMIN_LOGIN) {
-            AdminLoginScreen(
-                onBack = { navController.popBackStack() },
-                onSuccess = {
-                    navController.navigate(Routes.ADMIN_HOME) {
-                        popUpTo(Routes.ADMIN_LOGIN)
-                    }
-                }
-            )
-        }
-
+        // ---- Admin (reachable ONLY from Settings when the signed-in
+        // ---- account is the station owner; invisible to everyone else) ----
         composable(Routes.ADMIN_HOME) {
             AdminManagerScreen(navController = navController)
         }

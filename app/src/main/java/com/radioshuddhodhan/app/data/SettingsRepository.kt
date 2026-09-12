@@ -42,7 +42,6 @@ class SettingsRepository(private val context: Context) {
         val BACKEND_URL = stringPreferencesKey("backend_url")
         val AUTH_TOKEN = stringPreferencesKey("auth_token")
         val ADMIN_TOKEN = stringPreferencesKey("admin_token")
-        val ADMIN_PIN_HASH = stringPreferencesKey("admin_pin_hash")
         val FIRST_RUN_DONE = booleanPreferencesKey("first_run_done")
         val SEEDED = booleanPreferencesKey("db_seeded")
         val CURRENT_USER_ID = stringPreferencesKey("current_user_id")
@@ -64,7 +63,6 @@ class SettingsRepository(private val context: Context) {
     val backendUrl: Flow<String> = context.dataStore.data.map { it[Keys.BACKEND_URL] ?: "" }
     val authToken: Flow<String> = context.dataStore.data.map { it[Keys.AUTH_TOKEN] ?: "" }
     val adminToken: Flow<String> = context.dataStore.data.map { it[Keys.ADMIN_TOKEN] ?: "" }
-    val adminPinHashFlow: Flow<String> = context.dataStore.data.map { it[Keys.ADMIN_PIN_HASH] ?: "" }
     val firstRunDone: Flow<Boolean> = context.dataStore.data.map { it[Keys.FIRST_RUN_DONE] ?: false }
     val seeded: Flow<Boolean> = context.dataStore.data.map { it[Keys.SEEDED] ?: false }
     val currentUserId: Flow<String> = context.dataStore.data.map { it[Keys.CURRENT_USER_ID] ?: "" }
@@ -114,21 +112,4 @@ class SettingsRepository(private val context: Context) {
     suspend fun setLastSync(timestamp: Long) =
         context.dataStore.edit { it[Keys.LAST_SYNC] = timestamp }
 
-    // ---- Demo admin PIN (device-local only, salted SHA-256 hash) ----
-    suspend fun setAdminPin(pin: String) = context.dataStore.edit {
-        it[Keys.ADMIN_PIN_HASH] = hash(pin)
-    }
-
-    suspend fun checkAdminPin(pin: String): Boolean {
-        val stored = adminPinHashFlow.first()
-        return stored.isNotBlank() && hash(pin) == stored
-    }
-
-    suspend fun hasAdminPin(): Boolean = adminPinHashFlow.first().isNotBlank()
-
-    private fun hash(pin: String): String {
-        val digest = MessageDigest.getInstance("SHA-256")
-        val bytes = digest.digest("radio-shuddhodhan-salt:$pin".toByteArray(Charsets.UTF_8))
-        return bytes.joinToString("") { "%02x".format(it) }
-    }
 }

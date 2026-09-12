@@ -41,6 +41,10 @@ interface ApiService {
     @GET("api/v1/stations")
     suspend fun listStations(): List<StationDto>
 
+    /** Live listener count for a station (drives the "x listening" badge). */
+    @GET("api/v1/stations/{id}/listeners")
+    suspend fun getListenerCount(@Path("id") id: String): ListenerCountDto
+
     @GET("api/v1/events")
     suspend fun listEvents(
         @Query("from") from: String? = null,

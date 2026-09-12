@@ -124,6 +124,8 @@ data class UserEntity(
     val email: String?,
     val phone: String?,
     val isGuest: Boolean,
+    /** True only for the station owner's account (built-in admin). */
+    val isAdmin: Boolean = false,
     val createdAt: Long,
     /** Local (demo) password hash — never used once backend auth is connected. */
     val passwordHash: String?,

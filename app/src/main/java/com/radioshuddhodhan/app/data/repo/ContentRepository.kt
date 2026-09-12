@@ -63,6 +63,16 @@ class ContentRepository(
     fun observePostById(id: String) = db.postDao().observeById(id)
 
     fun observeStations() = db.stationDao().observeEnabled()
+
+    /**
+     * Live listener count for a station from the backend. Returns null in
+     * demo mode or when the backend cannot be reached — the UI then simply
+     * hides the badge (never invents a number).
+     */
+    suspend fun fetchListenerCount(stationId: String): Int? {
+        val api = apiOrNull() ?: return null
+        return runCatching { api.getListenerCount(stationId).count }.getOrNull()
+    }
     fun observeAllStations() = db.stationDao().observeAll()
     fun searchStations(q: String) = db.stationDao().searchEnabled(q)
 

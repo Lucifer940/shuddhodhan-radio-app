@@ -27,7 +27,6 @@ object Routes {
     const val SOCIAL = "social"
 
     // Admin
-    const val ADMIN_LOGIN = "adminLogin"
     const val ADMIN_HOME = "adminHome"
     const val ADMIN_NEWS = "adminNews"
     const val ADMIN_POSTS = "adminPosts"

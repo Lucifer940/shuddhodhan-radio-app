@@ -14,6 +14,7 @@ import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.AdminPanelSettings
 import androidx.compose.material.icons.filled.CloudSync
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.Info
@@ -145,7 +146,8 @@ private class SettingsViewModel(private val app: RadioApp) : ViewModel() {
 @Composable
 fun SettingsScreen(
     onBack: () -> Unit,
-    onOpenAbout: () -> Unit
+    onOpenAbout: () -> Unit,
+    onOpenAdmin: () -> Unit = {}
 ) {
     val L = LocalAppStrings.current
     val app = com.radioshuddhodhan.app.ui.LocalAppContainer.current
@@ -268,6 +270,28 @@ fun SettingsScreen(
             }
 
             Spacer(Modifier.height(12.dp))
+
+            // ---- Owner-only section. Completely invisible to normal users,
+            // guests and logged-out visitors — they never even learn it exists. ----
+            if (appState.user?.isAdmin == true) {
+                SettingsCard(
+                    icon = { Icon(Icons.Filled.AdminPanelSettings, null, tint = MaterialTheme.colorScheme.primary) },
+                    title = L.adminConsole
+                ) {
+                    Text(
+                        text = L.adminConsoleDesc,
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Spacer(Modifier.height(4.dp))
+                    Button(onClick = onOpenAdmin, modifier = Modifier.fillMaxWidth()) {
+                        Icon(Icons.Filled.AdminPanelSettings, contentDescription = null, modifier = Modifier.size(16.dp))
+                        Spacer(Modifier.width(6.dp))
+                        Text(L.openAdminDashboard)
+                    }
+                }
+                Spacer(Modifier.height(12.dp))
+            }
 
             SettingsCard(icon = { Icon(Icons.Filled.Info, null, tint = MaterialTheme.colorScheme.primary) }, title = L.aboutApp) {
                 TextButton(onClick = onOpenAbout) { Text(L.about) }

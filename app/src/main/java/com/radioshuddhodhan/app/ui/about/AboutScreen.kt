@@ -123,6 +123,24 @@ fun AboutScreen(
                     )
                     Spacer(Modifier.height(6.dp))
                     Text(
+                        text = "${L.frequency}: ${config.stationFrequency}",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Text(
+                        text = config.stationAddress,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Spacer(Modifier.height(6.dp))
+                    Text(
+                        text = if (L.nepali) config.taglineNe else config.taglineEn,
+                        style = MaterialTheme.typography.bodySmall,
+                        fontWeight = FontWeight.Medium,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    Spacer(Modifier.height(6.dp))
+                    Text(
                         text = "${L.createdBy}: ${AppInfo.CREATOR}",
                         style = MaterialTheme.typography.titleSmall,
                         color = MaterialTheme.colorScheme.primary,

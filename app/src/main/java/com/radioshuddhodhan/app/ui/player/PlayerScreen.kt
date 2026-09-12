@@ -30,6 +30,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.GraphicEq
+import androidx.compose.material.icons.filled.Groups
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Refresh
@@ -46,6 +47,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -96,6 +98,19 @@ fun PlayerScreen(onBack: () -> Unit) {
 
     var volume by remember { mutableIntStateOf(app.playerManager.currentVolume()) }
     val maxVolume = remember { app.playerManager.maxVolume().coerceAtLeast(1) }
+
+    // Live listener count from the backend (shown to everyone — admin and
+    // listeners alike). Stays hidden in demo mode: without a server there is
+    // no honest number, and we never invent one.
+    var listenerCount by remember { mutableStateOf<Int?>(null) }
+    LaunchedEffect(playerState.station?.id, playerState.isPlaying) {
+        val stationId = playerState.station?.id ?: return@LaunchedEffect
+        while (true) {
+            listenerCount = app.contentRepository.fetchListenerCount(stationId)
+                ?: break // demo mode / backend unreachable — stop polling
+            kotlinx.coroutines.delay(30_000)
+        }
+    }
 
     val pulseScale by animateFloatAsState(
         targetValue = if (playerState.isPlaying) 1.06f else 1f,
@@ -174,8 +189,8 @@ fun PlayerScreen(onBack: () -> Unit) {
                         StatusLine(L.streamNotConfigured, true)
                     playerState.hasError && playerState.retrying -> StatusLine(L.reconnecting, false, busy = true)
                     playerState.hasError -> StatusLine(L.connectionFailed, true)
-                    playerState.isConnecting -> StatusLine(L.connectingState, false, busy = true)
-                    playerState.isBuffering -> StatusLine(L.buffering, false, busy = true)
+                    playerState.isConnecting -> StatusLine(L.pleaseWait, false, busy = true)
+                    playerState.isBuffering -> StatusLine(L.pleaseWait, false, busy = true)
                     playerState.isPlaying -> StatusLine(L.connected, false)
                     else -> StatusLine(L.nowPlaying, false)
                 },
@@ -197,6 +212,32 @@ fun PlayerScreen(onBack: () -> Unit) {
                         color = if (status.isError) MaterialTheme.colorScheme.error
                         else MaterialTheme.colorScheme.onSurfaceVariant
                     )
+                }
+            }
+
+            if (listenerCount != null) {
+                Spacer(Modifier.height(8.dp))
+                Surface(
+                    shape = MaterialTheme.shapes.small,
+                    color = MaterialTheme.colorScheme.secondaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
+                    ) {
+                        Icon(
+                            Icons.Filled.Groups,
+                            contentDescription = null,
+                            modifier = Modifier.size(14.dp)
+                        )
+                        Spacer(Modifier.width(6.dp))
+                        Text(
+                            text = L.listeningCount(listenerCount ?: 0),
+                            style = MaterialTheme.typography.labelMedium,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
                 }
             }
 
