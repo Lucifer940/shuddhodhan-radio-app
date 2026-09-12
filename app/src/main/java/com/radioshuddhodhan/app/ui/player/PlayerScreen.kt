@@ -171,10 +171,10 @@ fun PlayerScreen(onBack: () -> Unit) {
                 targetState = when {
                     playerState.hasError && playerState.errorMessage == "STREAM_NOT_CONFIGURED" ->
                         StatusLine(L.streamNotConfigured, true)
-                    playerState.hasError && playerState.retrying -> StatusLine(L.reconnecting, false)
+                    playerState.hasError && playerState.retrying -> StatusLine(L.reconnecting, false, busy = true)
                     playerState.hasError -> StatusLine(L.connectionFailed, true)
-                    playerState.isConnecting -> StatusLine(L.connectingState, false)
-                    playerState.isBuffering -> StatusLine(L.buffering, false)
+                    playerState.isConnecting -> StatusLine(L.connectingState, false, busy = true)
+                    playerState.isBuffering -> StatusLine(L.buffering, false, busy = true)
                     playerState.isPlaying -> StatusLine(L.connected, false)
                     else -> StatusLine(L.nowPlaying, false)
                 },
@@ -182,7 +182,7 @@ fun PlayerScreen(onBack: () -> Unit) {
                 label = "status"
             ) { status ->
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    if (status.indeterminate) {
+                    if (status.busy) {
                         CircularProgressIndicator(
                             modifier = Modifier.size(14.dp),
                             strokeWidth = 2.dp,
@@ -331,4 +331,4 @@ fun PlayerScreen(onBack: () -> Unit) {
     }
 }
 
-private data class StatusLine(val text: String, val isError: Boolean)
+private data class StatusLine(val text: String, val isError: Boolean, val busy: Boolean = false)

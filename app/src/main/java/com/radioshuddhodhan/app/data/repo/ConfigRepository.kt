@@ -9,6 +9,7 @@ import com.radioshuddhodhan.app.data.remote.AppConfigDto
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.first
+import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 
 /**
@@ -24,7 +25,9 @@ class ConfigRepository(
 ) {
 
     val config: Flow<AppConfigDto> = db.configDao().observe().map { entity ->
-        entity?.let { decode(it.json) } ?: DEFAULT_CONFIG
+        entity?.let {
+            runCatching { ApiClient.json.decodeFromString<AppConfigDto>(it.json) }.getOrNull()
+        } ?: DEFAULT_CONFIG
     }
 
     suspend fun current(): AppConfigDto = config.first()

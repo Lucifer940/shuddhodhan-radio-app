@@ -43,7 +43,7 @@ class SyncManager(
     private val scope: CoroutineScope,
     private val contentRepository: ContentRepository,
     private val settings: SettingsRepository,
-    isOnline: () -> Boolean
+    private val isOnline: () -> Boolean
 ) {
 
     sealed class SyncStatus {

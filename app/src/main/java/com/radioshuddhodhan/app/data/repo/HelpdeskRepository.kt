@@ -58,8 +58,9 @@ class HelpdeskRepository(
         db.helpdeskDao().upsert(ticket.copy(reply = reply, repliedAt = System.currentTimeMillis(), status = "resolved"))
         val url = settings.backendUrl.first()
         if (url.isBlank()) return
+        val adminToken = settings.adminToken.first()
         runCatching {
-            val api = ApiClient.create(url) { settings.adminToken.first() }
+            val api = ApiClient.create(url) { adminToken.ifBlank { null } }
             api.updateHelpdeskTicket(
                 ticket.id,
                 com.radioshuddhodhan.app.data.remote.HelpdeskTicketDto(

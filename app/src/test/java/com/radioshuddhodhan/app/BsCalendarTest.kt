@@ -50,7 +50,8 @@ class BsCalendarTest {
     fun `round trip over several years`() {
         val start = LocalDate.of(2020, 1, 1)
         var date = start
-        repeat(2000) {
+        // 700 weekly steps stay inside the supported BS 2000–2090 table (~AD 2034-04).
+        repeat(700) {
             val bs = BsCalendar.fromAd(date)
             assertEquals(date, BsCalendar.toAd(bs))
             date = date.plusDays(7)

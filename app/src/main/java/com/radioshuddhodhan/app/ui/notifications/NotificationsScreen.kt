@@ -15,8 +15,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.Delete
-import androidx.compose.material.icons.automirrored.filled.DoneAll
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.DoneAll
 import androidx.compose.material.icons.filled.Bolt
 import androidx.compose.material.icons.filled.Campaign
 import androidx.compose.material.icons.filled.Event
@@ -40,6 +40,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.stateIn
 import com.radioshuddhodhan.app.RadioApp
 import com.radioshuddhodhan.app.core.util.Format
 import com.radioshuddhodhan.app.ui.LocalAppStrings
@@ -48,7 +50,9 @@ import com.radioshuddhodhan.app.ui.components.EmptyState
 import kotlinx.coroutines.launch
 
 private class NotificationsViewModel(private val app: RadioApp) : ViewModel() {
-    val notifications = app.contentRepository.observeNotifications()
+    val notifications: kotlinx.coroutines.flow.StateFlow<List<com.radioshuddhodhan.app.data.db.NotificationItemEntity>> =
+        app.contentRepository.observeNotifications()
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
 
     fun markAllRead() {
         viewModelScope.launch { app.contentRepository.markNotificationsRead() }
@@ -81,12 +85,12 @@ fun NotificationsScreen(onBack: () -> Unit) {
                 },
                 actions = {
                     TextButton(onClick = { viewModel.markAllRead() }) {
-                        Icon(Icons.AutoMirrored.Filled.DoneAll, contentDescription = null, modifier = Modifier.size(16.dp))
+                        Icon(Icons.Filled.DoneAll, contentDescription = null, modifier = Modifier.size(16.dp))
                         Spacer(Modifier.width(4.dp))
                         Text(L.markAllRead)
                     }
                     IconButton(onClick = { viewModel.clearAll() }) {
-                        Icon(Icons.AutoMirrored.Filled.Delete, contentDescription = L.clearAll)
+                        Icon(Icons.Filled.Delete, contentDescription = L.clearAll)
                     }
                 }
             )

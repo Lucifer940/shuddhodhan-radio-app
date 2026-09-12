@@ -195,9 +195,6 @@ class PlayerManager(
                 MediaMetadata.Builder()
                     .setTitle(station.name)
                     .setArtist("Radio Shuddhodhan")
-                    .setLiveConfiguration(
-                        MediaMetadata.LiveConfiguration.Builder().build()
-                    )
                     .build()
             )
             .build()

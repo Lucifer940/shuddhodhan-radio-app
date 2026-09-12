@@ -179,10 +179,10 @@ fun SettingsScreen(
         ) {
             SettingsCard(icon = { Icon(Icons.Filled.DarkMode, null, tint = MaterialTheme.colorScheme.primary) }, title = L.appearance) {
                 Text(L.languageSetting, style = MaterialTheme.typography.labelLarge)
-                RadioRow(L.nepali, appState.langPref == LanguagePref.NEPALI) {
+                RadioRow(L.nepaliLang, appState.langPref == LanguagePref.NEPALI) {
                     viewModel.setLanguage(LanguagePref.NEPALI)
                 }
-                RadioRow(L.english, appState.langPref == LanguagePref.ENGLISH) {
+                RadioRow(L.englishLang, appState.langPref == LanguagePref.ENGLISH) {
                     viewModel.setLanguage(LanguagePref.ENGLISH)
                 }
                 Spacer(Modifier.height(8.dp))

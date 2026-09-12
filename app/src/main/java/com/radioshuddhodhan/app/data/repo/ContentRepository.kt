@@ -3,6 +3,7 @@ package com.radioshuddhodhan.app.data.repo
 import com.radioshuddhodhan.app.data.SettingsRepository
 import com.radioshuddhodhan.app.data.db.AppDatabase
 import com.radioshuddhodhan.app.data.db.AnnouncementEntity
+import com.radioshuddhodhan.app.data.db.AppConfigEntity
 import com.radioshuddhodhan.app.data.db.BookmarkedNewsEntity
 import com.radioshuddhodhan.app.data.db.EventEntity
 import com.radioshuddhodhan.app.data.db.FavoriteStationEntity
@@ -33,7 +34,9 @@ class ContentRepository(
 
     private suspend fun apiOrNull(): ApiService? {
         val url = settings.backendUrl.first()
-        return if (url.isBlank()) null else ApiClient.create(url) { settings.authToken.first() }
+        if (url.isBlank()) return null
+        val token = settings.authToken.first()
+        return ApiClient.create(url) { token.ifBlank { null } }
     }
 
     // ---------------- Observers (reactive) ----------------

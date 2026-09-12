@@ -227,8 +227,8 @@ fun AppNavHost(
             AdminManagerScreen(navController = navController)
         }
 
-        composable(Routes.ADMIN_NEWS) { AdminNewsScreen() }
-        composable(Routes.ADMIN_POSTS) { AdminNewsScreen(postMode = true) }
+        composable(Routes.ADMIN_NEWS) { AdminNewsScreen(onBack = { navController.popBackStack() }) }
+        composable(Routes.ADMIN_POSTS) { AdminNewsScreen(postMode = true, onBack = { navController.popBackStack() }) }
         composable(Routes.ADMIN_STATIONS) { AdminStationsScreen() }
         composable(Routes.ADMIN_EVENTS) { AdminEventsScreen() }
         composable(Routes.ADMIN_ANNOUNCEMENTS) { AdminAnnouncementsScreen() }

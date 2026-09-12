@@ -59,10 +59,8 @@ import com.radioshuddhodhan.app.ui.appViewModel
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AdminNewsScreen(postMode: Boolean = false) {
+fun AdminNewsScreen(postMode: Boolean = false, onBack: () -> Unit = {}) {
     val L = LocalAppStrings.current
-    val backDispatcher = androidx.compose.ui.platform.LocalOnBackPressedDispatcherOwner.current
-        ?.onBackPressedDispatcher
     val viewModel: AdminDataViewModel = appViewModel { AdminDataViewModel(it) }
     val newsList by viewModel.news.collectAsStateWithLifecycle()
     val postList by viewModel.posts.collectAsStateWithLifecycle()
@@ -77,8 +75,6 @@ fun AdminNewsScreen(postMode: Boolean = false) {
             viewModel.consumeToast()
         }
     }
-
-    val onBack = { backDispatcher?.onBackPressed() }
 
     Scaffold(
         topBar = {

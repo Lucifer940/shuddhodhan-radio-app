@@ -1,3 +1,5 @@
+package com.radioshuddhodhan.app.core.nepalidate
+
 // Bundled Nepali festival & holiday data for BS 2082-2084.
 // Source: nepali-calendar-api by Sankalp Tharu (MIT License)
 // https://github.com/S4NKALP/nepali-calendar-api — key: "BS_YEAR-BS_MONTH-BS_DAY".
