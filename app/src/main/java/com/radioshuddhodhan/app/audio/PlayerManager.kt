@@ -59,6 +59,10 @@ class PlayerManager(
     @Volatile
     var autoReconnectEnabled: Boolean = true
 
+    /** Set when [release] has run; guards the async controller callback. */
+    @Volatile
+    private var released = false
+
     private val _state = MutableStateFlow(PlayerState())
     val state: StateFlow<PlayerState> = _state
 
@@ -74,21 +78,31 @@ class PlayerManager(
                 val future = MediaController.Builder(context, token).buildAsync()
                 future.addListener(
                     {
-                        val c = future.get()
-                        controller = c
-                        c.addListener(playerListener)
-                        // Restore UI state when reconnecting to a live session.
-                        val item = c.currentMediaItem
-                        if (item != null) {
-                            scope.launch {
-                                val station = stationResolver(item.mediaId)
-                                _state.value = _state.value.copy(
-                                    station = station,
-                                    isPlaying = c.isPlaying,
-                                    isBuffering = c.playbackState == Player.STATE_BUFFERING,
-                                    isConnecting = !c.isPlaying &&
-                                        c.playbackState == Player.STATE_BUFFERING
-                                )
+                        // If the future failed (service missing/crashed) get()
+                        // would throw on the executor thread and crash the app;
+                        // runCatching keeps this listener safe.
+                        runCatching {
+                            val c = future.get()
+                            if (released) {
+                                // release() already ran while we were connecting.
+                                c.release()
+                                return@runCatching
+                            }
+                            controller = c
+                            c.addListener(playerListener)
+                            // Restore UI state when reconnecting to a live session.
+                            val item = c.currentMediaItem
+                            if (item != null) {
+                                scope.launch {
+                                    val station = stationResolver(item.mediaId)
+                                    _state.value = _state.value.copy(
+                                        station = station,
+                                        isPlaying = c.isPlaying,
+                                        isBuffering = c.playbackState == Player.STATE_BUFFERING,
+                                        isConnecting = !c.isPlaying &&
+                                            c.playbackState == Player.STATE_BUFFERING
+                                    )
+                                }
                             }
                         }
                     },
@@ -242,6 +256,7 @@ class PlayerManager(
     }
 
     fun release() {
+        released = true
         retryJob?.cancel()
         controllerJob?.cancel()
         controller?.let { c ->

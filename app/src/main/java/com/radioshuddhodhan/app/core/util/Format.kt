@@ -34,12 +34,17 @@ object Format {
         val minutes = diff / 60_000
         val hours = diff / 3_600_000
         val days = diff / 86_400_000
+        fun ne(n: Long): String =
+            com.radioshuddhodhan.app.core.nepalidate.BsCalendar.toNepaliDigits(n.toString())
         return when {
             minutes < 1 -> if (nepali) "अहिले" else "just now"
-            minutes < 60 -> if (nepali) "${minutes} मिनेट अघि" else "${minutes}m ago"
-            hours < 24 -> if (nepali) "${hours} घण्टा अघि" else "${hours}h ago"
-            days < 7 -> if (nepali) "${days} दिन अघि" else "${days}d ago"
-            else -> dateTime(millis)
+            minutes < 60 -> if (nepali) "${ne(minutes)} मिनेट अघि" else "${minutes}m ago"
+            hours < 24 -> if (nepali) "${ne(hours)} घण्टा अघि" else "${hours}h ago"
+            days < 7 -> if (nepali) "${ne(days)} दिन अघि" else "${days}d ago"
+            else -> if (nepali) {
+                // dateTime() renders Western digits; convert for Nepali.
+                com.radioshuddhodhan.app.core.nepalidate.BsCalendar.toNepaliDigits(dateTime(millis))
+            } else dateTime(millis)
         }
     }
 }

@@ -36,12 +36,16 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun NepalClockBar(L: AppStrings, modifier: Modifier = Modifier) {
     var now by remember { mutableStateOf(LocalTime.now(BsCalendar.NEPAL_ZONE)) }
-    val bsToday by remember { mutableStateOf(BsCalendar.todayBs()) }
+    // Recomputed on every tick below so the date rolls over at Nepal midnight
+    // even when the app stays open across midnight (structural equality keeps
+    // recomposition cheap on ticks where nothing changed).
+    var bsToday by remember { mutableStateOf(BsCalendar.todayBs()) }
 
     LaunchedEffect(Unit) {
         while (true) {
             delay(1_000)
             now = LocalTime.now(BsCalendar.NEPAL_ZONE)
+            bsToday = BsCalendar.todayBs()
         }
     }
 

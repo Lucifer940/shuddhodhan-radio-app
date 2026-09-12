@@ -147,8 +147,9 @@ private fun EventEditorDialog(
     val L = LocalAppStrings.current
     var title by remember { mutableStateOf(event?.title ?: "") }
     var description by remember { mutableStateOf(event?.description ?: "") }
-    // Default to today (AD yyyy-MM-dd)
-    var date by remember { mutableStateOf(event?.adDate ?: java.time.LocalDate.now().toString()) }
+    // Default to today in NEPAL time (the calendar and event filters run on
+    // Nepal dates; using the device timezone could be a day off).
+    var date by remember { mutableStateOf(event?.adDate ?: BsCalendar.todayInNepal().toString()) }
     var time by remember { mutableStateOf(event?.timeLabel ?: "19:00") }
     var location by remember { mutableStateOf(event?.location ?: "") }
 
@@ -189,12 +190,19 @@ private fun EventEditorDialog(
                 )
             }
         },
+        // The date must be a valid, in-range AD date (the calendar filters
+        // events by ISO string comparison — a malformed date would silently
+        // never show up anywhere).
+        val dateValid = runCatching { BsCalendar.fromAd(java.time.LocalDate.parse(date)) }.isSuccess
         confirmButton = {
-            TextButton(onClick = {
-                if (title.isNotBlank()) {
-                    onSave(event?.id, title, description, date, time, location)
-                }
-            }) { Text(L.save) }
+            TextButton(
+                onClick = {
+                    if (title.isNotBlank() && dateValid) {
+                        onSave(event?.id, title, description, date, time, location)
+                    }
+                },
+                enabled = title.isNotBlank() && dateValid
+            ) { Text(L.save) }
         },
         dismissButton = { TextButton(onClick = onDismiss) { Text(L.cancel) } }
     )

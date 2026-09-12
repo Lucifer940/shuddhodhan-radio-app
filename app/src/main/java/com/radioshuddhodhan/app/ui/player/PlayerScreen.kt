@@ -75,6 +75,7 @@ import com.radioshuddhodhan.app.ui.components.LiveBadge
 import com.radioshuddhodhan.app.ui.theme.BrandCrimson
 import com.radioshuddhodhan.app.ui.theme.BrandNavy
 import com.radioshuddhodhan.app.notifications.NotificationHelper
+import kotlin.math.roundToInt
 
 /**
  * Full-screen live radio player: play/pause/stop, volume, buffering /
@@ -295,7 +296,7 @@ fun PlayerScreen(onBack: () -> Unit) {
                 Slider(
                     value = volume.toFloat(),
                     onValueChange = {
-                        volume = it.toInt()
+                        volume = it.roundToInt().coerceIn(0, maxVolume)
                         app.playerManager.setVolume(volume)
                     },
                     valueRange = 0f..maxVolume.toFloat(),

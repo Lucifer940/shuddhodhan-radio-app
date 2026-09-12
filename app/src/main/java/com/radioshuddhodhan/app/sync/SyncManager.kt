@@ -57,7 +57,10 @@ class SyncManager(
     private val _status = MutableStateFlow<SyncStatus>(SyncStatus.Idle)
     val status: StateFlow<SyncStatus> = _status
 
-    private var syncing = false
+    // Atomic: syncNow() is called from the main scope AND the WorkManager
+    // thread (SyncWorker). try/finally below guarantees the flag is cleared
+    // even if the caller's coroutine is cancelled mid-sync.
+    private val syncing = java.util.concurrent.atomic.AtomicBoolean(false)
 
     init {
         // Auto-sync whenever the connection returns (debounced).
@@ -77,28 +80,30 @@ class SyncManager(
 
     /** Runs a full sync if a backend is configured. Safe to call repeatedly. */
     suspend fun syncNow(): Boolean {
-        if (syncing) return false
-        if (!isOnlineSafe()) {
-            _status.value = SyncStatus.Failed(System.currentTimeMillis())
-            return false
+        if (!syncing.compareAndSet(false, true)) return false
+        try {
+            if (!isOnlineSafe()) {
+                _status.value = SyncStatus.Failed(System.currentTimeMillis())
+                return false
+            }
+            val hasBackend = settings.backendUrl.first().isNotBlank()
+            if (!hasBackend) {
+                _status.value = SyncStatus.DemoMode
+                return false
+            }
+            _status.value = SyncStatus.Syncing
+            val ok = contentRepository.syncFromServer()
+            val now = System.currentTimeMillis()
+            _status.value = if (ok) {
+                settings.setLastSync(now)
+                SyncStatus.Success(now)
+            } else {
+                SyncStatus.Failed(now)
+            }
+            return ok
+        } finally {
+            syncing.set(false)
         }
-        val hasBackend = settings.backendUrl.first().isNotBlank()
-        if (!hasBackend) {
-            _status.value = SyncStatus.DemoMode
-            return false
-        }
-        syncing = true
-        _status.value = SyncStatus.Syncing
-        val ok = contentRepository.syncFromServer()
-        val now = System.currentTimeMillis()
-        _status.value = if (ok) {
-            settings.setLastSync(now)
-            SyncStatus.Success(now)
-        } else {
-            SyncStatus.Failed(now)
-        }
-        syncing = false
-        return ok
     }
 
     private fun isOnlineSafe(): Boolean = runCatching { isOnline() }.getOrDefault(false)

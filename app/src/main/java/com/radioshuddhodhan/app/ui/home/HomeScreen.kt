@@ -94,10 +94,10 @@ fun HomeScreen(
     onOpenSocial: () -> Unit
 ) {
     val L = LocalAppStrings.current
-    val app = LocalAppContainer.current
+    val app = LocalAppContainer.current ?: return
     val viewModel: HomeViewModel = appViewModel { HomeViewModel(it) }
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val playerState by app!!.playerManager.state.collectAsStateWithLifecycle()
+    val playerState by app.playerManager.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
     LazyColumn(

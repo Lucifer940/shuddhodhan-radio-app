@@ -1,7 +1,5 @@
 package com.radioshuddhodhan.app.ui.about
 
-import android.content.Intent
-import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -48,6 +46,7 @@ import androidx.lifecycle.viewModelScope
 import com.radioshuddhodhan.app.R
 import com.radioshuddhodhan.app.core.AppInfo
 import com.radioshuddhodhan.app.RadioApp
+import com.radioshuddhodhan.app.core.util.ExternalApps
 import com.radioshuddhodhan.app.ui.LocalAppStrings
 import com.radioshuddhodhan.app.ui.appViewModel
 import com.radioshuddhodhan.app.ui.components.brandGradient
@@ -154,19 +153,17 @@ fun AboutScreen(
                     Spacer(Modifier.height(10.dp))
                     if (config.contactPhone.isNotBlank()) {
                         ContactRow(Icons.Filled.Call, config.contactPhone) {
-                            context.startActivity(Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + config.contactPhone)))
+                            ExternalApps.dial(context, config.contactPhone)
                         }
                     }
                     if (config.contactEmail.isNotBlank()) {
                         ContactRow(Icons.Filled.Email, config.contactEmail) {
-                            context.startActivity(
-                                Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:" + config.contactEmail))
-                            )
+ExternalApps.email(context, config.contactEmail)
                         }
                     }
                     if (config.contactWebsite.isNotBlank()) {
                         ContactRow(Icons.Filled.Language, config.contactWebsite) {
-                            context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(config.contactWebsite)))
+                            ExternalApps.openUrl(context, config.contactWebsite)
                         }
                     }
                     Spacer(Modifier.height(16.dp))

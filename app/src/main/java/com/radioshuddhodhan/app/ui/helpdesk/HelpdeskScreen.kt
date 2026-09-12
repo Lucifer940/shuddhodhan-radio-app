@@ -1,7 +1,5 @@
 package com.radioshuddhodhan.app.ui.helpdesk
 
-import android.content.Intent
-import android.net.Uri
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -53,6 +51,7 @@ import androidx.lifecycle.viewModelScope
 import com.radioshuddhodhan.app.RadioApp
 import com.radioshuddhodhan.app.core.util.Format
 import com.radioshuddhodhan.app.data.db.HelpdeskTicketEntity
+import com.radioshuddhodhan.app.core.util.ExternalApps
 import com.radioshuddhodhan.app.ui.LocalAppStrings
 import com.radioshuddhodhan.app.ui.appViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -274,27 +273,25 @@ fun HelpdeskScreen(onBack: () -> Unit) {
                 Row {
                     if (cfg.contactPhone.isNotBlank()) {
                         ContactAction(Icons.Filled.Call, L.phone) {
-                            context.startActivity(Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + cfg.contactPhone)))
+                            ExternalApps.dial(context, cfg.contactPhone)
                         }
                         Spacer(Modifier.width(8.dp))
                     }
                     if (cfg.contactEmail.isNotBlank()) {
                         ContactAction(Icons.Filled.Email, L.email) {
-                            context.startActivity(Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:" + cfg.contactEmail)))
+                            ExternalApps.email(context, cfg.contactEmail)
                         }
                         Spacer(Modifier.width(8.dp))
                     }
                     if (cfg.contactWhatsapp.isNotBlank()) {
                         ContactAction(Icons.Filled.Send, L.whatsapp) {
-                            context.startActivity(
-                                Intent(Intent.ACTION_VIEW, Uri.parse("https://wa.me/" + cfg.contactWhatsapp))
-                            )
+ExternalApps.openUrl(context, "https://wa.me/" + cfg.contactWhatsapp)
                         }
                         Spacer(Modifier.width(8.dp))
                     }
                     if (cfg.contactWebsite.isNotBlank()) {
                         ContactAction(Icons.Filled.Language, L.website) {
-                            context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(cfg.contactWebsite)))
+                            ExternalApps.openUrl(context, cfg.contactWebsite)
                         }
                     }
                 }

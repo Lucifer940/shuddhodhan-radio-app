@@ -21,11 +21,19 @@ object ApiClient {
         coerceInputValues = true
     }
 
-    fun okHttp(authTokenProvider: () -> String?): OkHttpClient =
+    // Single shared OkHttp base (connection pool + dispatcher). Each ApiService
+    // derives from it via newBuilder() so the app never leaks one pool per
+    // Retrofit instance across the 15-minute sync cycle.
+    private val baseClient: OkHttpClient by lazy {
         OkHttpClient.Builder()
             .connectTimeout(15, TimeUnit.SECONDS)
             .readTimeout(20, TimeUnit.SECONDS)
             .writeTimeout(20, TimeUnit.SECONDS)
+            .build()
+    }
+
+    fun okHttp(authTokenProvider: () -> String?): OkHttpClient =
+        baseClient.newBuilder()
             .addInterceptor { chain ->
                 val token = authTokenProvider()
                 val request = if (token.isNullOrBlank()) {

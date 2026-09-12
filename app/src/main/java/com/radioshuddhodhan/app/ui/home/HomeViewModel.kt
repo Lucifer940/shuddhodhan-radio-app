@@ -37,7 +37,7 @@ class HomeViewModel(private val app: RadioApp) : ViewModel() {
         app.contentRepository.observePosts(),
         app.contentRepository.observeStations(),
         app.contentRepository.observeUpcomingEvents(BsCalendar.todayInNepal().toString(), 5),
-        app.contentRepository.observeAnnouncements(System.currentTimeMillis()),
+        app.contentRepository.observeAnnouncements(),
         app.configRepository.config
     ) { values ->
         @Suppress("UNCHECKED_CAST")

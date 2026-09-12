@@ -58,11 +58,13 @@ class RadioApp : Application(), PushCapableApp {
         super.onCreate()
         NotificationHelper.createChannels(this)
 
-        // Seed demo content on first launch (only once).
+        // Seed demo content on first launch. Only mark as seeded on success so
+        // a failed seed is retried on the next launch instead of leaving the
+        // app permanently empty.
         appScope.launch {
             val alreadySeeded = settings.seeded.first()
-            SeedData.seedIfNeeded(database, alreadySeeded)
-            settings.setSeeded()
+            val seeded = runCatching { SeedData.seedIfNeeded(database, alreadySeeded) }
+            if (seeded.isSuccess) settings.setSeeded()
         }
 
         // Keep auto-reconnect setting in sync with the player.

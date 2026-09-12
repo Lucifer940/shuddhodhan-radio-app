@@ -1,7 +1,5 @@
 package com.radioshuddhodhan.app.ui.settings
 
-import android.content.Intent
-import android.net.Uri
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -54,6 +52,7 @@ import com.radioshuddhodhan.app.data.LanguagePref
 import com.radioshuddhodhan.app.data.NotificationPrefs
 import com.radioshuddhodhan.app.data.ThemeMode
 import com.radioshuddhodhan.app.sync.SyncManager
+import com.radioshuddhodhan.app.core.util.ExternalApps
 import com.radioshuddhodhan.app.ui.LocalAppStrings
 import com.radioshuddhodhan.app.ui.appViewModel
 import com.radioshuddhodhan.app.ui.AppViewModel
@@ -275,7 +274,7 @@ fun SettingsScreen(
                 TextButton(onClick = { /* privacy policy configurable via backend */ }) { Text(L.privacyPolicy) }
                 TextButton(onClick = { /* terms configurable via backend */ }) { Text(L.termsOfService) }
                 TextButton(onClick = { app?.let { ctx ->
-                    ctx.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/")))
+ExternalApps.openUrl(ctx, "https://github.com/Lucifer940/shuddhodhan-radio-app")
                 } }) { Text(L.help) }
                 Text(
                     text = "${L.versionInfo}: 1.0.1 (10001)",

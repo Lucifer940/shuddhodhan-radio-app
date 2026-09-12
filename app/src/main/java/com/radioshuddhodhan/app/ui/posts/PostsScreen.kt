@@ -26,6 +26,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import com.radioshuddhodhan.app.RadioApp
 import com.radioshuddhodhan.app.core.util.Format
+import com.radioshuddhodhan.app.core.util.ExternalApps
 import com.radioshuddhodhan.app.ui.LocalAppStrings
 import com.radioshuddhodhan.app.ui.appViewModel
 import com.radioshuddhodhan.app.ui.components.EmptyState
@@ -103,15 +104,11 @@ fun PostDetailScreen(
                 actions = {
                     IconButton(onClick = {
                         post?.let { p ->
-                            val send = android.content.Intent(android.content.Intent.ACTION_SEND).apply {
-                                type = "text/plain"
-                                putExtra(android.content.Intent.EXTRA_SUBJECT, p.title)
-                                putExtra(
-                                    android.content.Intent.EXTRA_TEXT,
-                                    p.title + "\n\n" + p.summary + "\n\n— Radio Shuddhodhan"
-                                )
-                            }
-                            context.startActivity(android.content.Intent.createChooser(send, L.share))
+                            ExternalApps.shareText(
+                                context,
+                                p.title + "\n\n" + p.summary + "\n\n— Radio Shuddhodhan",
+                                L.share
+                            )
                         }
                     }) {
                         Icon(Icons.Filled.Share, contentDescription = L.share)

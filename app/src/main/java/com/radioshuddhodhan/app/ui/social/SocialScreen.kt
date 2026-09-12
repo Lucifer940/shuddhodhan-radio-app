@@ -1,7 +1,5 @@
 package com.radioshuddhodhan.app.ui.social
 
-import android.content.Intent
-import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -52,6 +50,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import com.radioshuddhodhan.app.RadioApp
 import com.radioshuddhodhan.app.data.db.SocialLinkEntity
+import com.radioshuddhodhan.app.core.util.ExternalApps
 import com.radioshuddhodhan.app.ui.LocalAppStrings
 import com.radioshuddhodhan.app.ui.appViewModel
 import com.radioshuddhodhan.app.ui.components.EmptyState
@@ -140,9 +139,7 @@ fun SocialScreen(onBack: () -> Unit) {
                                 )
                                 Spacer(Modifier.height(14.dp))
                                 androidx.compose.material3.Button(onClick = {
-                                    context.startActivity(
-                                        Intent(Intent.ACTION_VIEW, Uri.parse(facebookLive.url))
-                                    )
+ExternalApps.openUrl(context, facebookLive.url)
                                 }) {
                                     Icon(Icons.Filled.Facebook, contentDescription = null)
                                     Spacer(Modifier.width(8.dp))
@@ -159,7 +156,7 @@ fun SocialScreen(onBack: () -> Unit) {
             } else {
                 items(links.filter { it.platform != "facebook_live" }, key = { it.id }) { link ->
                     SocialLinkCard(link = link) {
-                        context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(link.url)))
+                        ExternalApps.openUrl(context, link.url)
                     }
                 }
             }

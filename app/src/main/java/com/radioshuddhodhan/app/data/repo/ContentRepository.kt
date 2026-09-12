@@ -15,6 +15,10 @@ import com.radioshuddhodhan.app.data.db.StationEntity
 import com.radioshuddhodhan.app.data.remote.ApiClient
 import com.radioshuddhodhan.app.data.remote.ApiService
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.first
 import kotlinx.serialization.encodeToString
 import java.util.UUID
@@ -32,11 +36,18 @@ class ContentRepository(
     private val settings: SettingsRepository
 ) {
 
+    /** Cached Retrofit service; rebuilt only when the backend URL or token changes. */
+    private var cachedApi: Pair<String, ApiService>? = null
+
     private suspend fun apiOrNull(): ApiService? {
         val url = settings.backendUrl.first()
         if (url.isBlank()) return null
         val token = settings.authToken.first()
-        return ApiClient.create(url) { token.ifBlank { null } }
+        val key = "$url|$token"
+        cachedApi?.let { (k, api) -> if (k == key) return api }
+        val api = ApiClient.create(url) { token.ifBlank { null } }
+        cachedApi = key to api
+        return api
     }
 
     // ---------------- Observers (reactive) ----------------
@@ -60,7 +71,20 @@ class ContentRepository(
         db.eventDao().observeUpcoming(todayIso, limit)
     fun observeEventsForDate(dateIso: String) = db.eventDao().observeForDate(dateIso)
 
-    fun observeAnnouncements(now: Long) = db.announcementDao().observeActive(now)
+    /**
+     * Active announcements. Re-queries every minute so entries whose
+     * activeUntil has passed disappear while the app is open (a frozen
+     * timestamp would keep expired announcements visible until a data change).
+     */
+    @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
+    fun observeAnnouncements(): Flow<List<AnnouncementEntity>> =
+        flow {
+            while (true) {
+                emit(System.currentTimeMillis())
+                delay(60_000)
+            }
+        }.flatMapLatest { now -> db.announcementDao().observeActive(now) }
+            .distinctUntilChanged()
     fun observeAllAnnouncements() = db.announcementDao().observeAll()
 
     fun observeSocialLinks() = db.socialLinkDao().observeEnabled()
