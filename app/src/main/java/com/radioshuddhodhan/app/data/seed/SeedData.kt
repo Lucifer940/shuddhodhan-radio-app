@@ -15,9 +15,8 @@ import java.time.LocalDate
  * Everything seeded here is fully editable/removable from the Admin console.
  *
  * Stream note: public demo stream URLs (SomaFM, public internet radio) are
- * used for the sample stations. The Radio Shuddhodhan primary stream URL is
- * intentionally left empty — the administrator sets the real stream from the
- * Admin console (no hard-coded permanent stream in the APK).
+ * used for the sample stations. The Radio Shuddhodhan primary stream is the
+ * station's official live stream URL.
  */
 object SeedData {
 
@@ -35,7 +34,7 @@ object SeedData {
                     name = "Radio Shuddhodhan 95.1 MHz",
                     nameNe = "रेडियो शुद्धोधन 95.1 मेगाहर्ज",
                     description = "तपाईंको समुदायको आवाज — समाचार, संगीत र जानकारी। The voice of your community.",
-                    streamUrl = "", // Admin configures the real stream URL
+                    streamUrl = "http://stream.hamropatro.com/8483",
                     logoUrl = null,
                     isEnabled = true,
                     isFeatured = true,

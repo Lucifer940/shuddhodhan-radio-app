@@ -5,18 +5,18 @@ import androidx.compose.ui.graphics.Color
 // Radio Shuddhodhan brand palette — original design inspired by the crimson of
 // the Nepali flag, deep Himalayan navy and warm broadcast gold.
 
-// Brand palette sampled from the Radio Shuddhodhan logo
-// (dominant crimson #900018, navy #001830, gold #D89030).
-val BrandCrimson = Color(0xFF900018)
-val BrandCrimsonDark = Color(0xFF660011)
-val BrandCrimsonLight = Color(0xFFB52A3E)
-val BrandNavy = Color(0xFF152238)
-val BrandNavyLight = Color(0xFF2A3B55)
-val BrandGold = Color(0xFFD89030)
-val BrandGoldDark = Color(0xFFA66A1D)
+// Brand palette sampled directly from the Radio Shuddhodhan logo
+// (crimson #A6132D, deep navy #0E1E3D, broadcast gold #DD9836).
+val BrandCrimson = Color(0xFFA6132D)
+val BrandCrimsonDark = Color(0xFF7E0E22)
+val BrandCrimsonLight = Color(0xFFC23A52)
+val BrandNavy = Color(0xFF0E1E3D)
+val BrandNavyLight = Color(0xFF2A3B5F)
+val BrandGold = Color(0xFFDD9836)
+val BrandGoldDark = Color(0xFFB57A2A)
 
 // Light scheme
-val LightPrimary = Color(0xFFA7152D)
+val LightPrimary = Color(0xFFA6132D)
 val LightOnPrimary = Color(0xFFFFFFFF)
 val LightPrimaryContainer = Color(0xFFFFD9DD)
 val LightOnPrimaryContainer = Color(0xFF410008)

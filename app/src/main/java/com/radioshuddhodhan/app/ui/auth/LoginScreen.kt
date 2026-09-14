@@ -8,7 +8,6 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -27,10 +26,8 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -58,7 +55,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.radioshuddhodhan.app.R
@@ -69,7 +65,7 @@ import com.radioshuddhodhan.app.ui.theme.BrandNavy
 
 /**
  * Animated login screen: logo entrance, sliding form card, email/phone +
- * password, social buttons (gated by backend config) and guest browsing.
+ * password and guest browsing.
  */
 @Composable
 fun LoginScreen(
@@ -180,11 +176,6 @@ fun LoginScreen(
                         ),
                         modifier = Modifier.fillMaxWidth()
                     )
-                    Spacer(Modifier.height(6.dp))
-                    TextButton(onClick = { /* Password reset requires the backend */ }, enabled = false) {
-                        Text(L.forgotPassword, style = MaterialTheme.typography.labelMedium)
-                    }
-
                     AnimatedVisibility(visible = state.error != null) {
                         Text(
                             text = when (state.error) {
@@ -215,43 +206,10 @@ fun LoginScreen(
                             Text(L.login, style = MaterialTheme.typography.titleMedium)
                         }
                     }
-                    Spacer(Modifier.height(8.dp))
-                    Text(
-                        text = if (state.hasBackend) "" else L.demoAccountNotice,
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.fillMaxWidth()
-                    )
                 }
             }
 
-            Spacer(Modifier.height(16.dp))
-            Text(L.orContinueWith, style = MaterialTheme.typography.labelMedium, color = Color.White)
-            Spacer(Modifier.height(12.dp))
-
-            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                SocialButton(
-                    label = L.googleLogin,
-                    enabled = state.googleEnabled,
-                    onClick = { viewModel.clearError() }
-                )
-                SocialButton(
-                    label = L.phoneLogin,
-                    enabled = state.phoneEnabled,
-                    onClick = { viewModel.clearError() }
-                )
-            }
-            Spacer(Modifier.height(12.dp))
-            Text(
-                text = L.socialLoginNeedsBackend.format("Google / Phone"),
-                style = MaterialTheme.typography.labelSmall,
-                color = Color.White.copy(alpha = 0.85f),
-                textAlign = TextAlign.Center,
-                modifier = Modifier.padding(horizontal = 8.dp)
-            )
-
-            Spacer(Modifier.height(20.dp))
+            Spacer(Modifier.height(24.dp))
             OutlinedButton(
                 onClick = { viewModel.continueAsGuest(onLoggedIn) },
                 modifier = Modifier.fillMaxWidth()
@@ -271,9 +229,4 @@ fun LoginScreen(
     }
 }
 
-@Composable
-private fun SocialButton(label: String, enabled: Boolean, onClick: () -> Unit) {
-    OutlinedButton(onClick = onClick, enabled = enabled) {
-        Text(label, maxLines = 1)
-    }
-}
+

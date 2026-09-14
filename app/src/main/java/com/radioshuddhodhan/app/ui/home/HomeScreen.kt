@@ -889,7 +889,7 @@ private fun EventRow(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
                 ) {
-                    val bs = date?.let { BsCalendar.fromAd(it) }
+                    val bs = date?.let { runCatching { BsCalendar.fromAd(it) }.getOrNull() }
                     Text(
                         text = if (bs != null) {
                             if (nepali) BsCalendar.toNepaliDigits(bs.day.toString()) else bs.day.toString()

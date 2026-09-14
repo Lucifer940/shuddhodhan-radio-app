@@ -11,7 +11,7 @@ object AppInfo {
      * The creator credit is a protected constant — it can be configured
      * nowhere in the app or the admin dashboard and never changes.
      */
-    const val CREATOR = "Umesh Chaudhary"
+    const val CREATOR = "Umesh Tharu"
     const val PACKAGE = "com.radioshuddhodhan.app"
 
     // ---- Station identity (defaults; admin can override the live values

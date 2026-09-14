@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="theme-color" content="#A6132D" />
+<title>Radio Shuddhodhan 95.1 MHz</title>
+<link rel="icon" type="image/png" href="app_logo.png" />
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Persistent live radio engine -->
+  <audio id="rs-audio" preload="none"></audio>
+
+  <!-- Splash overlay -->
+  <div id="splash" class="splash">
+    <div class="splash-inner">
+      <img src="app_logo.png" alt="Radio Shuddhodhan" class="splash-logo" />
+      <div class="splash-title">Radio Shuddhodhan</div>
+      <div class="splash-sub">95.1 MHz</div>
+      <div class="splash-tag">हरेक नेपालीको मन रेडियो शुद्धोधन 95.1 मेगाहर्ज.</div>
+    </div>
+    <div class="splash-ver">v1.0.1</div>
+  </div>
+
+  <!-- Mini player (persistent) -->
+  <div id="minibar" class="minibar hidden"></div>
+
+  <!-- Routed screen content -->
+  <main id="app"></main>
+
+  <!-- Bottom navigation -->
+  <nav id="bottomnav" class="bottomnav hidden"></nav>
+
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

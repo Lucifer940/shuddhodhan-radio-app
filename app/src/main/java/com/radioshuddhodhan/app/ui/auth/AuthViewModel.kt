@@ -17,10 +17,7 @@ class AuthViewModel(private val app: RadioApp) : ViewModel() {
         val isLoading: Boolean = false,
         val error: String? = null,
         val success: Boolean = false,
-        val hasBackend: Boolean = false,
-        val googleEnabled: Boolean = false,
-        val facebookEnabled: Boolean = false,
-        val phoneEnabled: Boolean = true
+        val hasBackend: Boolean = false
     )
 
     private val _state = MutableStateFlow(UiState())
@@ -29,13 +26,7 @@ class AuthViewModel(private val app: RadioApp) : ViewModel() {
     init {
         viewModelScope.launch {
             val hasBackend = app.authRepository.hasBackend()
-            val config = app.configRepository.current()
-            _state.value = _state.value.copy(
-                hasBackend = hasBackend,
-                googleEnabled = config.googleLoginEnabled,
-                facebookEnabled = config.facebookLoginEnabled,
-                phoneEnabled = config.phoneLoginEnabled
-            )
+            _state.value = _state.value.copy(hasBackend = hasBackend)
         }
     }
 
@@ -88,9 +79,5 @@ class AuthViewModel(private val app: RadioApp) : ViewModel() {
             app.authRepository.continueAsGuest()
             onDone()
         }
-    }
-
-    fun clearError() {
-        _state.value = _state.value.copy(error = null)
     }
 }
