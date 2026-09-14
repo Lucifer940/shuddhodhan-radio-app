@@ -156,7 +156,9 @@ fun PlayerScreen(onBack: () -> Unit) {
                     contentDescription = null,
                     modifier = Modifier
                         .size(150.dp)
-                        .clip(CircleShape)
+                        .clip(MaterialTheme.shapes.extraLarge)
+                        .background(Color.White, MaterialTheme.shapes.extraLarge)
+                        .padding(10.dp)
                 )
             }
 

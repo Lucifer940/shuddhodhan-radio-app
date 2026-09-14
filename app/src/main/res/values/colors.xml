@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Brand crimson, matches the launcher icon background -->
-    <color name="ic_launcher_background">#A7152D</color>
+    <!-- Launcher icon background is now white to showcase the official Radio Shuddhodhan logo -->
+    <color name="ic_launcher_background">#FFFFFF</color>
     <color name="brand_crimson">#A7152D</color>
     <color name="brand_navy">#1F2A5A</color>
     <color name="brand_gold">#F0A500</color>
-    <color name="splash_background">#A7152D</color>
+    <color name="splash_background">#FFFFFF</color>
 </resources>

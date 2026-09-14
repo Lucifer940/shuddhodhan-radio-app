@@ -125,7 +125,9 @@ fun HomeScreen(
                         contentDescription = L.appName,
                         modifier = Modifier
                             .size(46.dp)
-                            .clip(CircleShape)
+                            .clip(MaterialTheme.shapes.medium)
+                            .background(Color.White, MaterialTheme.shapes.medium)
+                            .padding(3.dp)
                     )
                     Spacer(Modifier.width(10.dp))
                     Column(Modifier.weight(1f)) {

@@ -101,7 +101,9 @@ fun ProfileScreen(
                     contentDescription = null,
                     modifier = Modifier
                         .size(64.dp)
-                        .clip(CircleShape)
+                        .clip(MaterialTheme.shapes.large)
+                        .background(Color.White, MaterialTheme.shapes.large)
+                        .padding(4.dp)
                 )
                 Spacer(Modifier.width(14.dp))
                 Column(Modifier.weight(1f)) {

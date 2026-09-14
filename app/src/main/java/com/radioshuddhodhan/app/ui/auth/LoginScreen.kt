@@ -124,7 +124,9 @@ fun LoginScreen(
                 contentDescription = null,
                 modifier = Modifier
                     .size(92.dp)
-                    .clip(CircleShape)
+                    .clip(MaterialTheme.shapes.large)
+                    .background(Color.White, MaterialTheme.shapes.large)
+                    .padding(6.dp)
             )
             Spacer(Modifier.height(12.dp))
             Text(

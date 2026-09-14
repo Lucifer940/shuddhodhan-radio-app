@@ -65,29 +65,49 @@ fun SplashScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(
-                Brush.verticalGradient(listOf(BrandCrimson, BrandNavy))
-            ),
+            .background(Color.White),
         contentAlignment = Alignment.Center
     ) {
+        // Subtle brand gradient accent at top
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    Brush.verticalGradient(
+                        listOf(
+                            BrandCrimson.copy(alpha = 0.08f),
+                            Color.Transparent,
+                            BrandNavy.copy(alpha = 0.06f)
+                        )
+                    )
+                )
+        )
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
             modifier = Modifier.padding(24.dp)
         ) {
-            Image(
-                painter = painterResource(R.drawable.app_logo),
-                contentDescription = "Radio Shuddhodhan",
+            // White card behind the official logo to make it pop
+            Box(
                 modifier = Modifier
-                    .size(140.dp)
+                    .size(148.dp)
                     .scale(scale.value)
                     .alpha(logoAlpha.value)
-            )
+                    .background(Color.White, shape = MaterialTheme.shapes.extraLarge)
+                    .padding(8.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Image(
+                    painter = painterResource(R.drawable.app_logo),
+                    contentDescription = "Radio Shuddhodhan",
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
             Spacer(Modifier.height(24.dp))
             Text(
                 text = AppInfo.APP_NAME,
                 style = MaterialTheme.typography.headlineMedium,
-                color = Color.White,
+                color = BrandCrimson,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.alpha(textAlpha.value)
             )
@@ -95,28 +115,28 @@ fun SplashScreen(
             Text(
                 text = AppInfo.TAGLINE_NE,
                 style = MaterialTheme.typography.titleMedium,
-                color = Color.White.copy(alpha = 0.95f),
+                color = BrandNavy,
                 fontWeight = FontWeight.SemiBold,
                 modifier = Modifier.alpha(textAlpha.value)
             )
             Text(
                 text = AppInfo.TAGLINE_SUB_NE,
                 style = MaterialTheme.typography.bodyMedium,
-                color = Color.White.copy(alpha = 0.85f),
+                color = Color(0xFF444444),
                 modifier = Modifier.alpha(textAlpha.value)
             )
             Spacer(Modifier.height(10.dp))
             Text(
                 text = AppInfo.OPERATOR_NE,
                 style = MaterialTheme.typography.labelMedium,
-                color = Color.White.copy(alpha = 0.7f),
+                color = Color(0xFF777777),
                 modifier = Modifier.alpha(textAlpha.value)
             )
         }
         Text(
             text = "v${AppInfo.VERSION}",
             style = MaterialTheme.typography.labelMedium,
-            color = Color.White.copy(alpha = 0.6f),
+            color = Color(0xFF999999),
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .padding(bottom = 32.dp)

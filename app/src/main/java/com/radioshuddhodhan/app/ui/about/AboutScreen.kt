@@ -108,7 +108,9 @@ fun AboutScreen(
                         contentDescription = AppInfo.APP_NAME,
                         modifier = Modifier
                             .size(110.dp)
-                            .clip(CircleShape)
+                            .clip(MaterialTheme.shapes.large)
+                            .background(Color.White, MaterialTheme.shapes.large)
+                            .padding(6.dp)
                     )
                     Spacer(Modifier.height(14.dp))
                     Text(
