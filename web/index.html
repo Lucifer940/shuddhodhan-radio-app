@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="theme-color" content="#FFFFFF" />
+<title>Radio Shuddhodhan</title>
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png" />
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png" />
+<link rel="icon" type="image/png" sizes="192x192" href="favicon-192.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="favicon-180.png" />
+<link rel="icon" type="image/png" href="app_logo.png" />
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Persistent live radio engine -->
+  <audio id="rs-audio" preload="none"></audio>
+
+  <!-- Splash overlay -->
+  <div id="splash" class="splash">
+    <div class="splash-inner">
+      <img src="app_logo.png" alt="Radio Shuddhodhan" class="splash-logo" />
+      <div class="splash-title">Radio Shuddhodhan</div>
+      <div class="splash-sub">95.1 MHz</div>
+      <div class="splash-tag">हरेक नेपालीको मन</div>
+      <div class="splash-tag2">रेडियो शुद्धोधन 95.1 मेगाहर्ज</div>
+      <div class="splash-op">शुद्धोधन मल्टिमिडियाद्वारा सञ्चालित</div>
+    </div>
+    <div class="splash-ver">v1.0.1</div>
+  </div>
+
+  <!-- Mini player (persistent) -->
+  <div id="minibar" class="minibar hidden"></div>
+
+  <!-- Routed screen content -->
+  <main id="app"></main>
+
+  <!-- Bottom navigation -->
+  <nav id="bottomnav" class="bottomnav hidden"></nav>
+
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

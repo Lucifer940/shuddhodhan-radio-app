@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Many community radio stations still serve their streams over plain HTTP.
+  Cleartext is therefore permitted so that any admin-configured station URL can
+  play. HTTPS is always preferred automatically when the stream supports it.
+-->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="true">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+</network-security-config>
