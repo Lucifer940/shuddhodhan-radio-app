@@ -215,7 +215,28 @@ fun AdminConfigScreen() {
                 OutlinedTextField(
                     value = draft.stationAddress,
                     onValueChange = { draft = draft.copy(stationAddress = it) },
-                    label = { Text(L.address) },
+                    label = { Text(L.address + " (EN)") },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                OutlinedTextField(
+                    value = draft.stationAddressNe,
+                    onValueChange = { draft = draft.copy(stationAddressNe = it) },
+                    label = { Text(L.address + " (नेपाली)") },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                OutlinedTextField(
+                    value = draft.operatorText,
+                    onValueChange = { draft = draft.copy(operatorText = it) },
+                    label = { Text("Operator (EN)") },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                OutlinedTextField(
+                    value = draft.operatorTextNe,
+                    onValueChange = { draft = draft.copy(operatorTextNe = it) },
+                    label = { Text("Operator (नेपाली)") },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -226,9 +247,21 @@ fun AdminConfigScreen() {
                     modifier = Modifier.fillMaxWidth()
                 )
                 OutlinedTextField(
+                    value = draft.taglineSubNe,
+                    onValueChange = { draft = draft.copy(taglineSubNe = it) },
+                    label = { Text("Tagline line 2 (नेपाली)") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+                OutlinedTextField(
                     value = draft.taglineEn,
                     onValueChange = { draft = draft.copy(taglineEn = it) },
                     label = { Text("Tagline (English)") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+                OutlinedTextField(
+                    value = draft.taglineSubEn,
+                    onValueChange = { draft = draft.copy(taglineSubEn = it) },
+                    label = { Text("Tagline line 2 (English)") },
                     modifier = Modifier.fillMaxWidth()
                 )
                 Spacer(Modifier.height(6.dp))

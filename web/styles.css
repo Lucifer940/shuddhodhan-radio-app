@@ -92,7 +92,9 @@ img { display: block; }
 @keyframes pop { from { transform: scale(.6); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 .splash-title { font-size: 26px; font-weight: 800; margin-top: 22px; letter-spacing: .3px; }
 .splash-sub { font-size: 15px; opacity: .9; margin-top: 2px; }
-.splash-tag { font-size: 13px; opacity: .85; margin-top: 12px; }
+.splash-tag { font-size: 14px; font-weight: 600; opacity: .95; margin-top: 12px; }
+.splash-tag2 { font-size: 13px; opacity: .85; margin-top: 2px; }
+.splash-op { font-size: 11px; opacity: .65; margin-top: 10px; }
 .splash-ver { position: absolute; bottom: 30px; width: 100%; text-align: center; color: #fff; opacity: .6; font-size: 12px; }
 .fade-in { animation: fadeIn .45s ease both; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }

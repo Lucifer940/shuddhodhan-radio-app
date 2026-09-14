@@ -37,8 +37,13 @@ data class AppConfigDto(
     // ---- Station identity & team (shown on Home > Station details) ----
     val stationFrequency: String = "95.1 MHz",
     val stationAddress: String = "Shuddhodhan-4, Pharsatikar, Rupandehi, Nepal",
-    val taglineNe: String = "हरेक नेपालीको मन रेडियो शुद्धोधन 95.1 मेगाहर्ज.",
-    val taglineEn: String = "In every Nepali's heart — Radio Shuddhodhan 95.1 MHz.",
+    val stationAddressNe: String = "शुद्धोधन-४, फर्साटिकर, रूपन्देही, नेपाल",
+    val operatorTextNe: String = "शुद्धोधन मल्टिमिडियाद्वारा सञ्चालित",
+    val operatorText: String = "Operated by Shuddhodhan Multimedia",
+    val taglineNe: String = "हरेक नेपालीको मन",
+    val taglineSubNe: String = "रेडियो शुद्धोधन 95.1 मेगाहर्ज",
+    val taglineEn: String = "In every Nepali's heart",
+    val taglineSubEn: String = "Radio Shuddhodhan 95.1 MHz",
     val teamMembers: List<TeamMemberDto> = listOf(
         TeamMemberDto(
             roleKey = "manager", role = "Station Manager", roleNe = "स्टेशन प्रमुख",

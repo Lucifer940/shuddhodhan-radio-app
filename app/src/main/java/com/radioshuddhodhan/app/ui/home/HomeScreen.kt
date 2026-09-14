@@ -371,13 +371,23 @@ private fun StationDetailsCard(
             )
             Spacer(Modifier.height(4.dp))
             Text(
-                text = if (nepali) config.taglineNe else config.taglineEn,
+                text = if (nepali) {
+                    listOf(config.operatorTextNe, config.taglineNe, config.taglineSubNe)
+                        .filter { it.isNotBlank() }.joinToString(" — ")
+                } else {
+                    listOf(config.operatorText, config.taglineEn, config.taglineSubEn)
+                        .filter { it.isNotBlank() }.joinToString(" — ")
+                },
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Spacer(Modifier.height(10.dp))
 
-            DetailRow(Icons.Filled.LocationOn, config.stationAddress)
+            DetailRow(
+                Icons.Filled.LocationOn,
+                if (nepali) config.stationAddressNe.ifBlank { config.stationAddress }
+                else config.stationAddress
+            )
             if (config.contactPhone.isNotBlank()) {
                 DetailRow(Icons.Filled.Call, config.contactPhone)
             }

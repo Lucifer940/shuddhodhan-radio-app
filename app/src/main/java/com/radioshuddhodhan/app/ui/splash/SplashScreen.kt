@@ -94,8 +94,22 @@ fun SplashScreen(
             Spacer(Modifier.height(8.dp))
             Text(
                 text = AppInfo.TAGLINE_NE,
-                style = MaterialTheme.typography.bodyLarge,
+                style = MaterialTheme.typography.titleMedium,
+                color = Color.White.copy(alpha = 0.95f),
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier.alpha(textAlpha.value)
+            )
+            Text(
+                text = AppInfo.TAGLINE_SUB_NE,
+                style = MaterialTheme.typography.bodyMedium,
                 color = Color.White.copy(alpha = 0.85f),
+                modifier = Modifier.alpha(textAlpha.value)
+            )
+            Spacer(Modifier.height(10.dp))
+            Text(
+                text = AppInfo.OPERATOR_NE,
+                style = MaterialTheme.typography.labelMedium,
+                color = Color.White.copy(alpha = 0.7f),
                 modifier = Modifier.alpha(textAlpha.value)
             )
         }

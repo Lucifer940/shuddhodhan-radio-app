@@ -5,24 +5,51 @@
   'use strict';
 
   /* ============================ Constants ============================ */
-  var STREAM_URL = 'http://stream.hamropatro.com/8483';
-  var STATION_NAME = 'Radio Shuddhodhan 95.1 MHz';
-  var APP_NAME = 'Radio Shuddhodhan 95.1 MHz';
   var VERSION = '1.0.1';
-  var FREQUENCY = '95.1 MHz';
-  var ADDRESS = 'Shuddhodhan-4, Pharsatikar, Rupandehi, Nepal';
-  var EMAIL = 'Radiosuddhodhan95.1@gmail.com';
-  var PHONE = '+977 984-7036945';
-  var WHATSAPP = '+977 984-7036945';
-  var TAGLINE_NE = 'हरेक नेपालीको मन रेडियो शुद्धोधन 95.1 मेगाहर्ज.';
-  var TAGLINE_EN = "In every Nepali's heart — Radio Shuddhodhan 95.1 MHz.";
   var CREATOR = 'Umesh Tharu';
+
+  /* Default branding (overridden by the live backend /api/v1/config). */
+  var DEFAULT_CONFIG = {
+    appName: 'Radio Shuddhodhan 95.1 MHz',
+    stationName: 'Radio Shuddhodhan 95.1 MHz',
+    frequency: '95.1 MHz',
+    primaryStreamUrl: 'http://stream.hamropatro.com/8483',
+    stationAddress: 'Shuddhodhan-4, Pharsatikar, Rupandehi, Nepal',
+    stationAddressNe: 'शुद्धोधन-४, फर्साटिकर, रूपन्देही, नेपाल',
+    operatorText: 'Operated by Shuddhodhan Multimedia',
+    operatorTextNe: 'शुद्धोधन मल्टिमिडियाद्वारा सञ्चालित',
+    taglineNe: 'हरेक नेपालीको मन',
+    taglineSubNe: 'रेडियो शुद्धोधन 95.1 मेगाहर्ज',
+    taglineEn: "In every Nepali's heart",
+    taglineSubEn: 'Radio Shuddhodhan 95.1 MHz',
+    contactEmail: 'Radiosuddhodhan95.1@gmail.com',
+    contactPhone: '+977 984-7036945',
+    contactWhatsapp: '+977 984-7036945',
+    contactWebsite: 'https://www.facebook.com/share/1BjjUPuPdx/',
+    currentProgram: '', currentProgramNe: ''
+  };
+  var config = JSON.parse(JSON.stringify(DEFAULT_CONFIG));
+
+  /* Convenience getters resolved against the live config. */
+  function cfg(key) { return config[key] != null && config[key] !== '' ? config[key] : DEFAULT_CONFIG[key]; }
+  function STATION_NAME() { return cfg('stationName'); }
+  function APP_NAME() { return cfg('appName'); }
+  function FREQUENCY() { return cfg('frequency'); }
+  function ADDRESS() { return App.lang === 'ne' ? cfg('stationAddressNe') : cfg('stationAddress'); }
+  function OPERATOR() { return App.lang === 'ne' ? cfg('operatorTextNe') : cfg('operatorText'); }
+  function TAGLINE() { return App.lang === 'ne' ? cfg('taglineNe') : cfg('taglineEn'); }
+  function TAGLINE_SUB() { return App.lang === 'ne' ? cfg('taglineSubNe') : cfg('taglineSubEn'); }
+  function EMAIL() { return cfg('contactEmail'); }
+  function PHONE() { return cfg('contactPhone'); }
+  function WHATSAPP() { return cfg('contactWhatsapp'); }
+  function STREAM_URL() { return cfg('primaryStreamUrl'); }
 
   /* ============================ i18n ============================ */
   function S(ne, en) { return App.lang === 'ne' ? ne : en; }
   var STR = {
-    appName: APP_NAME,
-    tagline: function () { return App.lang === 'ne' ? TAGLINE_NE : TAGLINE_EN; },
+    appName: function () { return APP_NAME(); },
+    tagline: function () { return TAGLINE() + ' — ' + TAGLINE_SUB(); },
+    operator: function () { return OPERATOR(); },
     home: function () { return S('गृह', 'Home'); },
     liveRadio: function () { return S('लाइभ रेडियो', 'Live Radio'); },
     news: function () { return S('समाचार', 'News'); },
@@ -122,11 +149,14 @@
     openInBrowser: function () { return S('ब्राउजरमा खोल्नुहोस्', 'Open in browser'); },
     externalNotice: function () { return S('यो लिङ्क बाहिर खुल्छ।', 'This link opens externally.'); },
     noSocial: function () { return S('सामाजिक लिङ्कहरू कन्फिगर गरिएका छैनन्', 'Social links are not configured yet'); },
-    adminNotice: function () { return S('डेमो एडमिन — यो वेब संस्करणमा परिवर्तनहरू यस ब्राउजरमा मात्र सुरक्षित हुन्छन्।', 'Demo admin — on this web build, changes are saved in this browser only.'); },
+    adminNotice: function () { return S('एडमिनले गरेको परिवर्तन तुरुन्तै एप र वेबसाइट दुवैमा देखिन्छ (लाइभ सिंक)।', 'Changes saved here appear instantly in both the app and the website (live sync).'); },
     sendNotification: function () { return S('सूचना पठाउनुहोस्', 'Send notification'); },
     notifTitle: function () { return S('सूचनाको शीर्षक', 'Notification title'); },
     notifBody: function () { return S('सूचनाको सन्देश', 'Notification message'); },
     sendNow: function () { return S('अहिले पठाउनुहोस्', 'Send now'); },
+    save: function () { return S('सुरक्षित गर्नुहोस्', 'Save'); },
+    savedLive: function () { return S('सुरक्षित भयो — एप र वेबसाइटमा तुरुन्तै अपडेट भयो।', 'Saved — updated live on the app and website.'); },
+    adminLoginFailed: function () { return S('एडमिन पासवर्ड गलत छ।', 'Incorrect admin password.'); },
     listening: function (n) { return App.lang === 'ne' ? toNp(n) + ' जना सुन्दै' : n + ' listening'; },
     justNow: function () { return S('अहिले', 'just now'); },
     agoM: function (m) { return App.lang === 'ne' ? toNp(m) + ' मिनेट अघि' : m + 'm ago'; },
@@ -237,7 +267,7 @@
     { id: 'p2', title: 'स्वयंसेवक खोजिँदै', summary: 'रेडियो कार्यक्रममा सहयोग गर्न इच्छुक स्वयंसेवकहरूका लागि अवसर।', content: 'कार्यक्रम निर्माण, प्रस्तुति र प्राविधिक काममा सहयोग गर्न इच्छुक स्वयंसेवकहरूले हेल्पडेस्कमार्फत सम्पर्क गर्नुहोस्।', author: 'Radio Shuddhodhan', publishedAt: now - 6 * DAY, featured: false, image: null }
   ];
   var stations = [
-    { id: 'st-shuddhodhan', name: 'Radio Shuddhodhan 95.1 MHz', nameNe: 'रेडियो शुद्धोधन 95.1 मेगाहर्ज', description: 'तपाईंको समुदायको आवाज — समाचार, संगीत र जानकारी।', streamUrl: STREAM_URL, logo: null, enabled: true, featured: true, order: 0 },
+    { id: 'st-shuddhodhan', name: 'Radio Shuddhodhan 95.1 MHz', nameNe: 'रेडियो शुद्धोधन 95.1 मेगाहर्ज', description: 'तपाईंको समुदायको आवाज — समाचार, संगीत र जानकारी।', streamUrl: STREAM_URL(), logo: null, enabled: true, featured: true, order: 0 },
     { id: 'st-1', name: 'Groove Salad (Demo)', nameNe: 'ग्रुभ सलाड (डेमो)', description: 'शान्त संगीत। Sample ambient station.', streamUrl: 'https://ice1.somafm.com/groovesalad-128-mp3', logo: null, enabled: true, featured: false, order: 1 },
     { id: 'st-2', name: 'Indie Pop (Demo)', nameNe: 'इन्डी पप (डेमो)', description: 'इन्डी संगीत। Sample indie station.', streamUrl: 'https://ice1.somafm.com/indiepop-128-mp3', logo: null, enabled: true, featured: false, order: 2 },
     { id: 'st-3', name: 'Secret Agent (Demo)', nameNe: 'सिक्रेट एजेन्ट (डेमो)', description: 'लाउन्ज संगीत। Sample lounge station.', streamUrl: 'https://ice2.somafm.com/secretagent-128-mp3', logo: null, enabled: true, featured: false, order: 3 }
@@ -261,6 +291,10 @@
   function seedAnnouncements() {
     return [{ id: 'a1', title: 'नयाँ एप सार्वजनिक', message: 'Radio Shuddhodhan एप र वेबसाइट अब उपलब्ध छ। सबैलाई स्वागत छ!', createdAt: now, activeUntil: now + 30 * DAY, active: true }];
   }
+  /* Backend overrides (populated by /api/v1/* once the server is reachable). */
+  var liveEvents = null, liveAnnouncements = null;
+  function getEvents() { return liveEvents || seedEvents(); }
+  function getAnnouncements() { return liveAnnouncements || seedAnnouncements(); }
 
   /* ============================ Helpers ============================ */
   function $(sel) { return document.querySelector(sel); }
@@ -300,7 +334,7 @@
       audio.addEventListener('error', function () {
         store.streamError = true; store.playing = false;
         store.status = 'error';
-        if (currentStation && currentStation.id === 'st-shuddhodhan' && currentStation.streamUrl === STREAM_URL && !currentStation._triedHttps) {
+        if (currentStation && currentStation.id === 'st-shuddhodhan' && currentStation.streamUrl === STREAM_URL() && !currentStation._triedHttps) {
           currentStation._triedHttps = true;
           currentStation.streamUrl = 'https://stream.hamropatro.com/8483';
           playStation(currentStation);
@@ -393,7 +427,7 @@
 
   /* ----- screens ----- */
   function scrHome() {
-    var ev = seedEvents(), ann = seedAnnouncements();
+    var ev = getEvents(), ann = getAnnouncements();
     var breaking = news.filter(function (n) { return n.breaking; });
     var latest = news.slice().sort(function (a, b) { return b.publishedAt - a.publishedAt; }).slice(0, 6);
     var featured = stations.filter(function (s) { return s.enabled; }).slice(0, 6);
@@ -401,7 +435,7 @@
     var html = '';
     html += '<div class="header"><div class="brand-row">' +
       '<img class="logo" src="app_logo.png" alt="logo" />' +
-      '<div class="grow"><div class="brand-title">' + esc(APP_NAME) + '</div><div class="brand-sub">' + esc(greeting()) + '</div></div>' +
+      '<div class="grow"><div class="brand-title">' + esc(APP_NAME()) + '</div><div class="brand-sub">' + esc(greeting()) + '</div></div>' +
       '</div><div class="clockbar" id="clockbar"></div></div>';
 
     html += '<div class="screen">';
@@ -411,7 +445,7 @@
     html += '<div class="hero ' + (store.playing ? 'playing' : '') + '" onclick="App.openPlayer()">' +
       '<div class="pulse"></div>' +
       '<span class="live-pill">🔴 ' + STR.liveRadio() + '</span>' +
-      '<h2>' + esc(STATION_NAME) + '</h2>' +
+      '<h2>' + esc(STATION_NAME()) + '</h2>' +
       '<div class="prog">' + STR.currentProgram() + ': ' + STR.noProgram() + '</div>' +
       '<button class="listen" onclick="event.stopPropagation();App.toggle()">' + (store.playing ? STR.pause() : '▶ ' + STR.listenLive()) + '</button>' +
       '</div>';
@@ -467,11 +501,12 @@
       { role: STR.marketingManager(), name: '', contact: '' }
     ].filter(function (t) { return t.name; });
     return '<div class="card station-details" style="margin-top:14px">' +
-      '<div style="font-weight:800">' + (App.lang === 'ne' ? 'रेडियो शुद्धोधन ' : 'Radio Shuddhodhan ') + FREQUENCY + '</div>' +
+      '<div style="font-weight:800">' + (App.lang === 'ne' ? 'रेडियो शुद्धोधन ' : 'Radio Shuddhodhan ') + FREQUENCY() + '</div>' +
+      '<div style="font-weight:700;color:var(--primary);margin-top:6px">' + esc(OPERATOR()) + '</div>' +
       '<div class="muted" style="margin-top:4px">' + STR.tagline() + '</div>' +
-      '<div class="muted" style="margin-top:8px">📍 ' + esc(ADDRESS) + '</div>' +
-      '<div class="muted">📞 ' + esc(PHONE) + '</div>' +
-      '<div class="muted">✉️ ' + esc(EMAIL) + '</div>' +
+      '<div class="muted" style="margin-top:8px">📍 ' + esc(ADDRESS()) + '</div>' +
+      '<div class="muted">📞 ' + esc(PHONE()) + '</div>' +
+      '<div class="muted">✉️ ' + esc(EMAIL()) + '</div>' +
       (team.length ? '<div style="font-weight:800;margin-top:12px">' + STR.ourTeam() + '</div><div class="team">' +
         team.map(function (t) { return '<div class="team-row"><div class="avatar">' + esc(t.name.charAt(0)) + '</div><div><div style="font-weight:700;font-size:13.5px">' + esc(t.name) + '</div><div class="muted">' + esc(t.role) + '</div></div></div>'; }).join('') +
         '</div>' : '') +
@@ -583,7 +618,7 @@
     var dim = daysInMonth(v.y, v.m);
     var today = todayBs();
     var sel = store.calSel;
-    var ev = seedEvents();
+    var ev = getEvents();
     var cells = [];
     for (var i = 0; i < offset; i++) cells.push(null);
     for (var d = 1; d <= dim; d++) cells.push({ y: v.y, m: v.m, d: d });
@@ -634,7 +669,7 @@
   function scrPlayer() {
     var html = '<div class="topbar"><button class="back" onclick="App.back()">‹</button><div class="ttl">' + STR.liveRadio() + '</div></div>';
     html += '<div class="player"><div class="art ' + (store.playing ? 'playing' : '') + '"><img src="app_logo.png" alt="logo"/></div>';
-    html += '<div class="name">' + esc(currentStation ? currentStation.name : STATION_NAME) + '</div>';
+    html += '<div class="name">' + esc(currentStation ? currentStation.name : STATION_NAME()) + '</div>';
     html += '<div class="status">' + (store.connecting || store.buffering ? '<div class="spinner dark"></div>' : '') + esc(statusLabel()) + '</div>';
     if (store.streamError) html += '<div class="muted" style="margin-top:10px;text-align:center;max-width:320px">' + STR.streamHint() + '</div>';
     html += '<div class="controls">' +
@@ -673,7 +708,7 @@
 
   function scrLogin() {
     return '<div class="auth-bg"><div class="screen" style="max-width:440px">' +
-      '<div class="auth-head"><img src="app_logo.png" alt="logo"/><h1>' + STR.welcomeBack() + '</h1><p>' + esc(APP_NAME) + '</p></div>' +
+      '<div class="auth-head"><img src="app_logo.png" alt="logo"/><h1>' + STR.welcomeBack() + '</h1><p>' + esc(APP_NAME()) + '</p></div>' +
       '<div class="auth-card">' +
       '<div id="auth-err"></div>' +
       '<div class="field"><label>' + STR.emailOrPhone() + '</label><input id="li-id" autocomplete="username" /></div>' +
@@ -685,7 +720,7 @@
   }
   function scrRegister() {
     return '<div class="auth-bg"><div class="screen" style="max-width:440px">' +
-      '<div class="auth-head"><img src="app_logo.png" alt="logo"/><h1>' + STR.createAccount() + '</h1><p>' + esc(APP_NAME) + '</p></div>' +
+      '<div class="auth-head"><img src="app_logo.png" alt="logo"/><h1>' + STR.createAccount() + '</h1><p>' + esc(APP_NAME()) + '</p></div>' +
       '<div class="auth-card">' +
       '<div id="auth-err"></div>' +
       '<div class="field"><label>' + STR.name() + '</label><input id="rg-name" autocomplete="name" /></div>' +
@@ -722,13 +757,14 @@
     var html = topbar(STR.about());
     html += '<div class="screen" style="text-align:center">';
     html += '<img src="app_logo.png" style="width:110px;height:110px;border-radius:50%;margin:10px auto"/>';
-    html += '<h1 style="font-size:22px;margin:10px 0 2px">' + esc(APP_NAME) + '</h1>';
-    html += '<div class="muted">' + STR.version() + ': v' + VERSION + ' • ' + FREQUENCY + '</div>';
-    html += '<div class="muted">' + esc(ADDRESS) + '</div>';
-    html += '<div style="color:var(--primary);font-weight:700;margin-top:8px">' + STR.tagline() + '</div>';
+    html += '<h1 style="font-size:22px;margin:10px 0 2px">' + esc(APP_NAME()) + '</h1>';
+    html += '<div class="muted">' + STR.version() + ': v' + VERSION + ' • ' + FREQUENCY() + '</div>';
+    html += '<div class="muted">' + esc(ADDRESS()) + '</div>';
+    html += '<div style="color:var(--primary);font-weight:700;margin-top:8px">' + esc(OPERATOR()) + '</div>';
+    html += '<div style="color:var(--primary);font-weight:700;margin-top:4px">' + STR.tagline() + '</div>';
     html += '<div style="font-weight:700;margin-top:8px">' + STR.createdBy() + ': ' + CREATOR + '</div>';
     html += '<div class="card" style="margin-top:16px;text-align:left"><div style="font-weight:800;margin-bottom:6px">' + STR.contactInfo() + '</div>' +
-      '<div class="muted">📞 ' + esc(PHONE) + '</div><div class="muted">✉️ ' + esc(EMAIL) + '</div>' +
+      '<div class="muted">📞 ' + esc(PHONE()) + '</div><div class="muted">✉️ ' + esc(EMAIL()) + '</div>' +
       '<div class="muted">🌐 ' + esc('https://www.facebook.com/share/1BjjUPuPdx/') + '</div></div>';
     html += '<button class="btn outline" style="margin-top:14px" onclick="App.go(\'social\')">' + STR.followUs() + '</button>';
     html += '</div>';
@@ -800,20 +836,39 @@
     var html = topbar(STR.adminConsole());
     html += '<div class="screen">';
     html += '<div class="card" style="background:var(--secondary-container);color:var(--on-secondary-container)">' + STR.adminNotice() + '</div>';
-    html += '<div class="grid-tiles" style="margin-top:14px">' +
-      tile('📰', S('समाचार व्यवस्थापन', 'Manage news')) +
-      tile('📻', S('स्टेशन व्यवस्थापन', 'Manage stations')) +
-      tile('📅', S('इभेन्ट व्यवस्थापन', 'Manage events')) +
-      tile('🔔', STR.sendNotification()) + '</div>';
+    html += '<div id="admin-err"></div>';
 
-    html += '<div class="card" style="margin-top:14px"><div style="font-weight:800;margin-bottom:10px">' + STR.sendNotification() + '</div>' +
-      '<div class="field"><label>' + STR.notifTitle() + '</label><input id="nt-title" /></div>' +
-      '<div class="field"><label>' + STR.notifBody() + '</label><textarea id="nt-body" rows="3"></textarea></div>' +
-      '<button class="btn" onclick="App.sendNotif()">' + STR.sendNow() + '</button></div>';
+    if (!adminToken) {
+      html += '<div class="card" style="margin-top:14px"><div style="font-weight:800;margin-bottom:10px">' + STR.adminConsole() + ' — ' + STR.login() + '</div>' +
+        '<div class="field"><label>' + STR.password() + '</label><input id="ad-pw" type="password" /></div>' +
+        '<button class="btn" onclick="App.adminLogin()">' + STR.login() + '</button></div>';
+    } else {
+      html += '<div class="card" style="margin-top:14px"><div style="font-weight:800;margin-bottom:10px">' + S('ब्रान्डिङ र स्टेशन विवरण', 'Branding & station details') + '</div>' +
+        f('ad-stationName', S('स्टेशन नाम', 'Station name'), cfg('stationName')) +
+        f('ad-frequency', S('फ्रिक्वेन्सी', 'Frequency'), cfg('frequency')) +
+        f('ad-stream', S('लाइभ स्ट्रिम URL', 'Live stream URL'), cfg('primaryStreamUrl')) +
+        f('ad-operatorNe', S('सञ्चालक (नेपाली)', 'Operator (Nepali)'), cfg('operatorTextNe')) +
+        f('ad-operatorEn', S('सञ्चालक (English)', 'Operator (English)'), cfg('operatorText')) +
+        f('ad-taglineNe', S('ट्यागलाइन (नेपाली)', 'Tagline (Nepali)'), cfg('taglineNe')) +
+        f('ad-taglineSubNe', S('ट्यागलाइन दोस्रो (नेपाली)', 'Tagline line 2 (Nepali)'), cfg('taglineSubNe')) +
+        f('ad-taglineEn', S('ट्यागलाइन (English)', 'Tagline (English)'), cfg('taglineEn')) +
+        f('ad-taglineSubEn', S('ट्यागलाइन दोस्रो (English)', 'Tagline line 2 (English)'), cfg('taglineSubEn')) +
+        f('ad-addrNe', S('ठेगाना (नेपाली)', 'Address (Nepali)'), cfg('stationAddressNe')) +
+        f('ad-addrEn', S('ठेगाना (English)', 'Address (English)'), cfg('stationAddress')) +
+        f('ad-phone', S('फोन', 'Phone'), cfg('contactPhone')) +
+        f('ad-email', S('इमेल', 'Email'), cfg('contactEmail')) +
+        f('ad-progNe', S('चलिरहेको कार्यक्रम (नेपाली)', 'Current program (Nepali)'), cfg('currentProgramNe')) +
+        '<button class="btn" style="margin-top:14px" onclick="App.adminSave()">' + STR.save() + '</button></div>';
+
+      html += '<div class="card" style="margin-top:14px"><div style="font-weight:800;margin-bottom:10px">' + STR.sendNotification() + '</div>' +
+        '<div class="field"><label>' + STR.notifTitle() + '</label><input id="nt-title" /></div>' +
+        '<div class="field"><label>' + STR.notifBody() + '</label><textarea id="nt-body" rows="3"></textarea></div>' +
+        '<button class="btn" onclick="App.sendNotif()">' + STR.sendNow() + '</button></div>';
+    }
     html += '</div>';
     return html;
   }
-  function tile(ic, lb) { return '<div class="tile"><div class="ic">' + ic + '</div><div class="lb">' + lb + '</div></div>'; }
+  function f(id, label, val) { return '<div class="field"><label>' + esc(label) + '</label><input id="' + id + '" value="' + esc(val) + '" /></div>'; }
 
   /* ============================ Router ============================ */
   var routes = ['home', 'news', 'newsDetail', 'posts', 'postDetail', 'stations', 'calendar', 'player', 'profile', 'login', 'register', 'settings', 'about', 'helpdesk', 'social', 'notifications', 'admin'];
@@ -952,14 +1007,51 @@
       var msg = ($('#hd-msg') ? $('#hd-msg').value : '').trim();
       if (!name || !contact || !msg) { toast(STR.fieldsRequired()); return; }
       store.tickets.unshift({ id: 't' + Date.now(), name: name, contact: contact, category: cat, message: msg, createdAt: Date.now(), reply: null });
-      save(); toast(STR.messageSent()); this.go('helpdesk');
+      save();
+      api('/api/v1/helpdesk', { method: 'POST', body: { name: name, contact: contact, category: cat, message: msg } })
+        .then(function () { toast(STR.messageSent()); }).catch(function () { toast(STR.messageSent()); });
+      this.go('helpdesk');
     },
     sendNotif: function () {
       var t = ($('#nt-title') ? $('#nt-title').value : '').trim();
       var b = ($('#nt-body') ? $('#nt-body').value : '').trim();
       if (!t || !b) { toast(STR.fieldsRequired()); return; }
       store.notifications.unshift({ id: 'n' + Date.now(), type: 'general', title: t, body: b, receivedAt: Date.now(), read: false });
-      save(); toast(STR.sendNow()); this.go('notifications');
+      save();
+      api('/api/v1/admin/notifications', { method: 'POST', body: { title: t, body: b, type: 'general' } })
+        .then(function () { toast(STR.sendNow()); }).catch(function () { toast(STR.sendNow()); });
+      this.go('notifications');
+    },
+    adminLogin: function () {
+      var pw = ($('#ad-pw') ? $('#ad-pw').value : '');
+      var err = $('#admin-err'); if (!err) return;
+      if (!pw) { err.innerHTML = '<div class="error-text">' + STR.fieldsRequired() + '</div>'; return; }
+      api('/api/v1/admin/login', { method: 'POST', body: { password: pw } }).then(function (r) {
+        adminToken = r.token; try { localStorage.setItem('rs_admin_token', adminToken); } catch (e) {}
+        render();
+      }).catch(function (e) {
+        err.innerHTML = '<div class="error-text">' + STR.adminLoginFailed() + '</div>';
+      });
+    },
+    adminSave: function () {
+      var err = $('#admin-err'); if (err) err.innerHTML = '';
+      var body = {
+        stationName: $('#ad-stationName').value, frequency: $('#ad-frequency').value,
+        primaryStreamUrl: $('#ad-stream').value,
+        operatorTextNe: $('#ad-operatorNe').value, operatorText: $('#ad-operatorEn').value,
+        taglineNe: $('#ad-taglineNe').value, taglineSubNe: $('#ad-taglineSubNe').value,
+        taglineEn: $('#ad-taglineEn').value, taglineSubEn: $('#ad-taglineSubEn').value,
+        stationAddressNe: $('#ad-addrNe').value, stationAddress: $('#ad-addrEn').value,
+        contactPhone: $('#ad-phone').value, contactEmail: $('#ad-email').value,
+        currentProgramNe: $('#ad-progNe').value, currentProgram: $('#ad-progNe').value
+      };
+      api('/api/v1/admin/config', { method: 'PUT', body: body }).then(function (c) {
+        applyConfig(c);
+        toast(STR.savedLive());
+        render();
+      }).catch(function (e) {
+        if (err) err.innerHTML = '<div class="error-text">' + (e.message || 'error') + '</div>';
+      });
     },
     markAllRead: function () { store.notifications.forEach(function (n) { n.read = true; }); save(); render(); },
     clearNotifs: function () { store.notifications = []; save(); render(); }
@@ -971,6 +1063,75 @@
   }
 
   function applyTheme() { document.body.setAttribute('data-theme', store.theme); }
+
+  /* ============================ Backend live sync ============================ */
+  var API = (function () { try { return (location.origin || window.location.origin); } catch (e) { return ''; } })();
+  var adminToken = null;
+  try { adminToken = localStorage.getItem('rs_admin_token'); } catch (e) {}
+
+  function api(path, opts) {
+    opts = opts || {};
+    var headers = opts.headers || {};
+    if (opts.body && typeof opts.body !== 'string') { opts.body = JSON.stringify(opts.body); headers['Content-Type'] = 'application/json'; }
+    if (adminToken) headers['Authorization'] = 'Bearer ' + adminToken;
+    return fetch(API + path, Object.assign({}, opts, { headers: headers })).then(function (r) {
+      return r.text().then(function (t) {
+        var j = {}; try { j = t ? JSON.parse(t) : {}; } catch (e) { j = {}; }
+        if (!r.ok) { var err = new Error(j.message || ('HTTP ' + r.status)); err.status = r.status; throw err; }
+        return j;
+      });
+    }).catch(function (e) {
+      if (e && e.status === 401) { adminToken = null; try { localStorage.removeItem('rs_admin_token'); } catch (x) {} }
+      throw e;
+    });
+  }
+
+  function applyConfig(c) {
+    Object.keys(DEFAULT_CONFIG).forEach(function (k) {
+      if (c[k] != null && c[k] !== '') config[k] = c[k];
+    });
+    if (c.primaryStationName != null && c.primaryStationName !== '') config.stationName = c.primaryStationName;
+    // keep the featured station in step with the primary stream / name
+    var primary = stations.find(function (s) { return s.id === 'st-shuddhodhan'; });
+    if (primary) {
+      primary.name = cfg('stationName');
+      primary.nameNe = cfg('stationName');
+      primary.streamUrl = cfg('primaryStreamUrl');
+    }
+  }
+
+  function mapNews(n) { return { id: n.id, title: n.title, summary: n.summary || '', content: n.content || '', category: n.category || '', author: n.author || '', publishedAt: n.publishedAt || n.updatedAt || Date.now(), featured: !!n.isFeatured, breaking: !!n.isBreaking, image: n.imageUrl || null }; }
+  function mapPost(p) { return { id: p.id, title: p.title, summary: p.summary || '', content: p.content || '', author: p.author || '', publishedAt: p.publishedAt || p.updatedAt || Date.now(), featured: !!p.isFeatured, image: p.imageUrl || null }; }
+  function mapStation(s) { return { id: s.id, name: s.name, nameNe: s.nameNe || s.name, description: s.description || '', streamUrl: s.streamUrl || null, logo: s.logoUrl || null, enabled: s.isEnabled !== false, featured: !!s.isFeatured, order: s.sortOrder || 0 }; }
+  function mapEvent(e) { return { id: e.id, title: e.title, titleNe: e.titleNe || e.title, adDate: (e.adDate || '').slice(0, 10), time: e.timeLabel || e.time || '', location: e.location || '', featured: !!e.isFeatured }; }
+  function mapAnnouncement(a) { return { id: a.id, title: a.title, message: a.message, createdAt: a.createdAt, activeUntil: a.activeUntil, active: a.isActive !== false }; }
+
+  function syncConfig() {
+    return api('/api/v1/config').then(function (c) { applyConfig(c); }).catch(function () {});
+  }
+  function syncContent() {
+    return Promise.all([
+      api('/api/v1/news').then(function (l) { news = l.map(mapNews); }).catch(function () {}),
+      api('/api/v1/posts').then(function (l) { posts = l.map(mapPost); }).catch(function () {}),
+      api('/api/v1/stations').then(function (l) { stations = l.map(mapStation); }).catch(function () {}),
+      api('/api/v1/events').then(function (l) { liveEvents = l.map(mapEvent); }).catch(function () {}),
+      api('/api/v1/announcements').then(function (l) { liveAnnouncements = l.map(mapAnnouncement); }).catch(function () {}),
+      api('/api/v1/social-links').then(function (l) { if (l.length) socialLinks = l.map(function (x) { return { id: x.id, platform: x.platform, label: x.label, url: x.url }; }); }).catch(function () {})
+    ]);
+  }
+  function syncAll() {
+    return Promise.all([syncConfig(), syncContent()]).then(function () { render(); });
+  }
+
+  function connectSSE() {
+    try {
+      if (window.EventSource) {
+        var es = new EventSource(API + '/api/v1/events');
+        es.addEventListener('change', function () { syncAll(); });
+        es.onerror = function () { /* server may be off; silently keep defaults */ };
+      }
+    } catch (e) { /* ignore */ }
+  }
 
   /* ============================ Init ============================ */
   function init() {
@@ -986,6 +1147,9 @@
       save();
     }
     render();
+    // fetch live config + content, then subscribe to live updates (app + web stay in sync)
+    syncAll();
+    connectSSE();
     // splash out
     setTimeout(function () { var s = $('#splash'); if (s) s.classList.add('done'); }, 1600);
     // clock ticks every second while home is visible

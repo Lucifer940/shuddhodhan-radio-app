@@ -128,13 +128,24 @@ fun AboutScreen(
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Text(
-                        text = config.stationAddress,
+                        text = if (L.nepali) config.stationAddressNe.ifBlank { config.stationAddress }
+                        else config.stationAddress,
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Spacer(Modifier.height(6.dp))
                     Text(
-                        text = if (L.nepali) config.taglineNe else config.taglineEn,
+                        text = if (L.nepali) config.operatorTextNe else config.operatorText,
+                        style = MaterialTheme.typography.bodySmall,
+                        fontWeight = FontWeight.Medium,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    Text(
+                        text = if (L.nepali) {
+                            config.taglineNe + " — " + config.taglineSubNe
+                        } else {
+                            config.taglineEn + " — " + config.taglineSubEn
+                        },
                         style = MaterialTheme.typography.bodySmall,
                         fontWeight = FontWeight.Medium,
                         color = MaterialTheme.colorScheme.primary

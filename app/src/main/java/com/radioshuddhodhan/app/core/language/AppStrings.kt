@@ -13,8 +13,16 @@ class AppStrings(val nepali: Boolean) {
     // ---------- General ----------
     val appName get() = "Radio Shuddhodhan 95.1 MHz"
     val tagline get() = t(
-        "हरेक नेपालीको मन रेडियो शुद्धोधन 95.1 मेगाहर्ज.",
-        "In every Nepali's heart — Radio Shuddhodhan 95.1 MHz."
+        "हरेक नेपालीको मन",
+        "In every Nepali's heart"
+    )
+    val taglineSub get() = t(
+        "रेडियो शुद्धोधन 95.1 मेगाहर्ज",
+        "Radio Shuddhodhan 95.1 MHz"
+    )
+    val operator get() = t(
+        "शुद्धोधन मल्टिमिडियाद्वारा सञ्चालित",
+        "Operated by Shuddhodhan Multimedia"
     )
     val ok get() = t("ठीक छ", "OK")
     val cancel get() = t("रद्द गर्नुहोस्", "Cancel")

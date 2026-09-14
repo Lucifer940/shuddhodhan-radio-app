@@ -27,3 +27,6 @@ captures/
 
 # Release output (kept out of git; CI artifacts are used instead)
 releases/
+
+# Live backend runtime data (auto-seeded; contains server-side secrets)
+server/data.json
