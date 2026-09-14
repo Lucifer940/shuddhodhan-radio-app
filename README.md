@@ -40,6 +40,45 @@ console — all cloud-controllable.
   preferences, auto-reconnect, backend server URL.
 - **Responsive** — phones and tablets, light/dark, animated throughout.
 
+## Project Structure (Your Requested Format)
+
+You asked for:
+
+```
+android/
+app/
+build.gradle
+settings.gradle
+AndroidManifest.xml
+gradle/
+```
+
+This repo now supports **BOTH**:
+
+**Root = Android project (standard):**
+```
+./
+├── app/build.gradle.kts
+├── app/src/main/AndroidManifest.xml
+├── build.gradle.kts
+├── settings.gradle.kts
+├── gradle/
+└── gradlew
+```
+
+**android/ = Same project (your format):**
+```
+android/
+├── app/build.gradle.kts
+├── app/src/main/AndroidManifest.xml
+├── build.gradle.kts
+├── settings.gradle.kts
+├── gradle/
+└── gradlew
+```
+
+Both build the same app. See `docs/PROJECT_STRUCTURE.md`.
+
 ## Build
 
 Requirements: JDK 17, Android SDK 35.
@@ -47,17 +86,45 @@ Requirements: JDK 17, Android SDK 35.
 ```bash
 ./gradlew assembleDebug        # debug APK
 ./gradlew testDebugUnitTest    # unit tests (BS calendar verification)
-./gradlew assembleRelease      # release APK (debug-signed for testing)
+./gradlew assembleRelease      # release APK (signed if keystore.properties exists)
+./gradlew bundleRelease        # release AAB (for Play Store) ← USE THIS FOR PLAY STORE
 ```
 
-APKs are also built by GitHub Actions on every push (see
+APKs and AABs are also built by GitHub Actions on every push (see
 `.github/workflows/android-build.yml`) and attached as artifacts.
+
+## Play Store Flow
+
+```
+Radio Shuddhodhan
+        ↓
+Android project (root or android/ folder)
+        ↓
+./gradlew bundleRelease → app-release.aab (signed)
+        ↓
+Google Play Console (play.google.com/console)
+        ↓
+Google Play Store (public)
+```
+
+**Full guide:** [`docs/PLAY_STORE.md`](docs/PLAY_STORE.md) — signing, AAB generation, Console upload, GitHub Secrets setup.
+
+**Signing:** Upload keystore generated at `app/upload-keystore.jks` (gitignored). See `SIGNING.md` and `keystore.properties.example`.
+
+```
+# Quick AAB build
+./gradlew bundleRelease
+# Output: app/build/outputs/bundle/release/app-release.aab
+```
 
 ## Documentation
 
 - [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — app architecture
 - [`docs/BACKEND_API.md`](docs/BACKEND_API.md) — full backend API contract,
   push (FCM) setup and the secure AI proxy design
+- [`docs/PROJECT_STRUCTURE.md`](docs/PROJECT_STRUCTURE.md) — requested `android/ app/ build.gradle ...` format (both root and android/ folder)
+- [`docs/PLAY_STORE.md`](docs/PLAY_STORE.md) — full Play Store flow: `Radio Shuddhodhan → Android → Signed AAB → Console → Store`
+- [`SIGNING.md`](SIGNING.md) — keystore generation, `bundleRelease`, GitHub Secrets for CI
 
 ## Backend
 

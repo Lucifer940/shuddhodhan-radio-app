@@ -12,12 +12,17 @@
 build/
 app/build/
 .cxx/
+android/app/build/
+android/build/
+android/.gradle/
 
 # Local configuration files (sdk paths, signing secrets)
 local.properties
 keystore.properties
 *.jks
 *.keystore
+*.p12
+upload-keystore.*
 
 # IDE files
 .idea/

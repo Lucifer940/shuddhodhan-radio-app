@@ -29,12 +29,37 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
 
       - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
+        run: |
+          chmod +x gradlew
+          chmod +x android/gradlew 2>/dev/null || true
 
-      - name: Unit tests, debug and release APKs
+      - name: Setup signing (if secrets provided)
+        # If you have added Play Store upload keystore as GitHub Secrets,
+        # this will create keystore.properties and decode the keystore
+        # Secrets needed: KEYSTORE_BASE64, STORE_PASSWORD, KEY_ALIAS, KEY_PASSWORD
+        run: |
+          if [ -n "${{ secrets.KEYSTORE_BASE64 }}" ]; then
+            echo "🔑 Decoding keystore from secrets..."
+            echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > app/upload-keystore.jks
+            cat > keystore.properties << EOF
+          storeFile=app/upload-keystore.jks
+          storePassword=${{ secrets.STORE_PASSWORD }}
+          keyAlias=${{ secrets.KEY_ALIAS }}
+          keyPassword=${{ secrets.KEY_PASSWORD }}
+          EOF
+            echo "✅ keystore.properties created from secrets"
+            cat keystore.properties | sed 's/Password=.*/Password=***/'
+          else
+            echo "ℹ️ No KEYSTORE_BASE64 secret - will use debug keystore for CI"
+          fi
+
+      - name: Unit tests, debug and release APKs + AAB
         run: |
           set -o pipefail
-          ./gradlew testDebugUnitTest assembleDebug assembleRelease --continue --stacktrace 2>&1 | tee build.log
+          ./gradlew testDebugUnitTest assembleDebug assembleRelease bundleRelease --continue --stacktrace 2>&1 | tee build.log
+          echo ""
+          echo "=== Build outputs ==="
+          ls -lh app/build/outputs/apk/debug/ app/build/outputs/apk/release/ app/build/outputs/bundle/release/ 2>/dev/null || true
 
       - name: Report errors as commit comment
         if: failure()
@@ -87,4 +112,12 @@ jobs:
         with:
           name: RadioShuddhodhan-v1.0.1-release
           path: app/build/outputs/apk/release/*.apk
+          retention-days: 30
+
+      - name: Upload release AAB artifact (for Play Store)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: RadioShuddhodhan-v1.0.1-release-aab
+          path: app/build/outputs/bundle/release/*.aab
           retention-days: 30
