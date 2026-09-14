@@ -11,7 +11,7 @@ class AppStrings(val nepali: Boolean) {
     private fun t(ne: String, en: String): String = if (nepali) ne else en
 
     // ---------- General ----------
-    val appName get() = "Radio Shuddhodhan 95.1 MHz"
+    val appName get() = "Radio Shuddhodhan"
     val tagline get() = t(
         "हरेक नेपालीको मन",
         "In every Nepali's heart"

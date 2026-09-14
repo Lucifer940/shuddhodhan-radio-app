@@ -4,7 +4,7 @@ package com.radioshuddhodhan.app.core
  * Static application metadata for Radio Shuddhodhan.
  */
 object AppInfo {
-    const val APP_NAME = "Radio Shuddhodhan 95.1 MHz"
+    const val APP_NAME = "Radio Shuddhodhan"
     const val VERSION = "1.0.1"
 
     /**

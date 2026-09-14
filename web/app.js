@@ -10,7 +10,7 @@
 
   /* Default branding (overridden by the live backend /api/v1/config). */
   var DEFAULT_CONFIG = {
-    appName: 'Radio Shuddhodhan 95.1 MHz',
+    appName: 'Radio Shuddhodhan',
     stationName: 'Radio Shuddhodhan 95.1 MHz',
     frequency: '95.1 MHz',
     primaryStreamUrl: 'http://stream.hamropatro.com/8483',
